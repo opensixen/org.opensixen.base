@@ -30,7 +30,7 @@ import org.opensixen.osgi.interfaces.IServiceLocator;
 public class Service {
 
 	private static final String LOCATOR_CLASS = "ServiceLocator";
-	private static final String DEFAULT_LOCATOR_CLASS = "org.adempiere.base.equinox.EquinoxServiceLocator";
+	private static final String DEFAULT_LOCATOR_CLASS = "org.opensixen.osgi.equinox.EquinoxServiceLocator";
 
 	private static IServiceLocator theLocator;
 
