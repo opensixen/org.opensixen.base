@@ -2,5 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="org.opensixen.osgi.interfaces.IResourceFinder" name="ResourceFinder" schema="schema/org.adempiere.osgi.IResourceFinder.exsd"/>
+   <extension-point id="org.opensixen.osgi.interfaces.ICentralizedIDGenerator" name="ICentralizedIDGenerator" schema="schema/org.opensixen.osgi.interfaces.ICentralizedIDGenerator.exsd"/>
 
 </plugin>

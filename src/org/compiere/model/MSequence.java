@@ -43,6 +43,9 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Ini;
 import org.compiere.util.Trx;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.ServiceQuery;
+import org.opensixen.osgi.interfaces.ICentralizedIDGenerator;
 
 /**
  *	Sequence Model.
@@ -1445,6 +1448,19 @@ public class MSequence extends X_AD_Sequence
 		String prm_COMMENT = MSysConfig.getValue("DICTIONARY_ID_COMMENTS");
 		String prm_PROJECT = new String("Adempiere");
 
+		// Look for osgi generator
+		//ServiceQuery query = new ServiceQuery();
+		//query.put("tableName", TableName);
+		//query.put("url", website);
+		ICentralizedIDGenerator generator = Service.locate(ICentralizedIDGenerator.class);
+		
+		if (generator != null)	{
+			int id= generator.getNextID(TableName, null);
+			if (id  > 0)	{
+				return id;
+			}
+		}
+		
 		return getNextID_HTTP(TableName, website, prm_USER,
 				prm_PASSWORD, prm_TABLE, prm_ALTKEY, prm_COMMENT, prm_PROJECT);
 	}

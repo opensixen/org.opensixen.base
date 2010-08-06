@@ -21,6 +21,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.Trx;
 import org.compiere.wf.MWFProcess;
 import org.compiere.wf.MWorkflow;
+import org.opensixen.osgi.BundleProxyClassLoader;
 
 /**
  * 
@@ -121,13 +122,15 @@ public final class ProcessUtil {
 		}
 		//Get Class
 		Class<?> processClass = null;
+		
 		//use context classloader if available
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		if (classLoader == null)
 			classLoader = ProcessUtil.class.getClassLoader();
 		try
 		{
-			processClass = classLoader.loadClass(className);
+			//processClass = classLoader.loadClass(className);
+			processClass = BundleProxyClassLoader.getClass(className);
 		}
 		catch (ClassNotFoundException ex)
 		{
