@@ -71,8 +71,13 @@ public abstract class Convert
 	/**	Logger	*/
 	private static CLogger	log	= CLogger.getCLogger (Convert.class);
 	
+	/** Oracle filename 	*/
+	private static String orFileName;	
     private static FileOutputStream tempFileOr = null;
     private static Writer writerOr;
+    
+    /** Postgresql filename 	*/
+	private static String pgFileName;
     private static FileOutputStream tempFilePg = null;
     private static Writer writerPg;
 
@@ -434,6 +439,7 @@ public abstract class Convert
 		            File fileNameOr = File.createTempFile("migration_script_", "_oracle.sql");
 		            tempFileOr = new FileOutputStream(fileNameOr, true);
 		            writerOr = new BufferedWriter(new OutputStreamWriter(tempFileOr, "UTF8"));
+		            orFileName = fileNameOr.getAbsolutePath();
 				}
 				writeLogMigrationScript(writerOr, oraStatement);
 			} catch (IOException e) {
@@ -450,6 +456,7 @@ public abstract class Convert
 		            File fileNamePg = File.createTempFile("migration_script_", "_postgresql.sql");
 		            tempFilePg = new FileOutputStream(fileNamePg, true);
 		            writerPg = new BufferedWriter(new OutputStreamWriter(tempFilePg, "UTF8"));
+		            pgFileName = fileNamePg.getAbsolutePath();
 				}
 				writeLogMigrationScript(writerPg, pgStatement);
 			} catch (IOException e) {
@@ -549,4 +556,19 @@ public abstract class Convert
 		w.flush();
 	}
 
+	/**
+	 * Return the oracle migration script filename
+	 * @return
+	 */
+	public static String getOrFileName() {
+		return orFileName;
+	}
+	
+	/**
+	 * Return the postgreSQL migration script filename
+	 * @return
+	 */
+	public static String getPgFileName() {
+		return pgFileName;
+	}
 }   //  Convert

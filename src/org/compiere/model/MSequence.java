@@ -1440,13 +1440,13 @@ public class MSequence extends X_AD_Sequence
 	 */
 	public static synchronized int getNextOfficialID_HTTP (String TableName)
 	{
-		String website = MSysConfig.getValue("DICTIONARY_ID_WEBSITE"); // "http://developer.adempiere.com/cgi-bin/get_ID";
-		String prm_USER = MSysConfig.getValue("DICTIONARY_ID_USER");  // "globalqss";
-		String prm_PASSWORD = MSysConfig.getValue("DICTIONARY_ID_PASSWORD");  // "password_inseguro";
-		String prm_TABLE = TableName;
-		String prm_ALTKEY = "";  // TODO: generate alt-key based on key of table
-		String prm_COMMENT = MSysConfig.getValue("DICTIONARY_ID_COMMENTS");
-		String prm_PROJECT = new String("Adempiere");
+//		String website = MSysConfig.getValue("DICTIONARY_ID_WEBSITE"); // "http://developer.adempiere.com/cgi-bin/get_ID";
+//		String prm_USER = MSysConfig.getValue("DICTIONARY_ID_USER");  // "globalqss";
+//		String prm_PASSWORD = MSysConfig.getValue("DICTIONARY_ID_PASSWORD");  // "password_inseguro";
+//		String prm_TABLE = TableName;
+//		String prm_ALTKEY = "";  // TODO: generate alt-key based on key of table
+//		String prm_COMMENT = MSysConfig.getValue("DICTIONARY_ID_COMMENTS");
+//		String prm_PROJECT = new String("Adempiere");
 
 		// Look for osgi generator
 		//ServiceQuery query = new ServiceQuery();
@@ -1460,9 +1460,9 @@ public class MSequence extends X_AD_Sequence
 				return id;
 			}
 		}
-		
-		return getNextID_HTTP(TableName, website, prm_USER,
-				prm_PASSWORD, prm_TABLE, prm_ALTKEY, prm_COMMENT, prm_PROJECT);
+		throw new RuntimeException("No se puede conectar con el servidor de ID remoto.");
+		//return getNextID_HTTP(TableName, website, prm_USER,
+		//		prm_PASSWORD, prm_TABLE, prm_ALTKEY, prm_COMMENT, prm_PROJECT);
 	}
 
 	/**

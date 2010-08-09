@@ -49,7 +49,7 @@
 
    <element name="generator">
       <complexType>
-         <attribute name="generator" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
