@@ -3996,5 +3996,9 @@ public abstract class PO
 		}
 		return false;
 	}
+	
+	public POInfo get_POInfo()	{
+		return p_info;
+	}
 
 }   //  PO
