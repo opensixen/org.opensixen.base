@@ -537,21 +537,21 @@ public abstract class Convert
 
 	private static void writeLogMigrationScript(Writer w, String statement) throws IOException
 	{
-		String prm_COMMENT = MSysConfig.getValue("DICTIONARY_ID_COMMENTS");
+		//String prm_COMMENT = MSysConfig.getValue("DICTIONARY_ID_COMMENTS");
 		// log time and date
 		SimpleDateFormat format = DisplayType.getDateFormat(DisplayType.DateTime);
 		String dateTimeText = format.format(new Timestamp(System.currentTimeMillis()));
-		w.append("-- ");
+		w.append("--## <!-- ");
 		w.append(dateTimeText);
-		w.append("\n");
+		w.append(" -->\n");
 		// log sysconfig comment
-		w.append("-- ");
-		w.append(prm_COMMENT);
+		//w.append("--## ");
+		w.append("--## <script>");
 		w.append("\n");
 		// log statement
 		w.append(statement);
 		// close statement
-		w.append("\n;\n\n");
+		w.append("\n;\n--## </script>\n\n");
 		// flush stream - teo_sarca BF [ 1894474 ]
 		w.flush();
 	}
@@ -570,5 +570,28 @@ public abstract class Convert
 	 */
 	public static String getPgFileName() {
 		return pgFileName;
+	}
+	
+	/**
+	 * Close logs files and clear names
+	 * new files will be created
+	 */
+	public static void resetLogMigrationScript()	{
+		try {
+			tempFileOr.close();
+			tempFilePg.close();
+			writerOr.close();
+			writerPg.close();
+		}
+		catch (IOException e)	{
+			log.warning("Can't close log migration script temp files.");
+		}
+		tempFileOr = null;
+		tempFilePg = null;
+		orFileName = null;
+		pgFileName = null;
+		writerOr = null;
+		writerPg = null;
+		
 	}
 }   //  Convert
