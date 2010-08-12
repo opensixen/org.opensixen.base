@@ -13,6 +13,9 @@ import org.compiere.model.GridTab;
  */
 public interface IColumnCallout extends IService
 {
+	public static final String P_TABLENAME="tableName"; 
+	public static final String P_COLUMNNAME="columnName"; 
+	
 	/**
 	 *	Start Callout.
 	 *  <p>
@@ -33,3 +36,4 @@ public interface IColumnCallout extends IService
 		GridTab mTab, GridField mField, Object value, Object oldValue);
 
 }
+
