@@ -2,7 +2,7 @@ package org.opensixen.osgi;
 
 import org.opensixen.osgi.interfaces.IModelController;
 
-public abstract class AbstractModelController implements IModelController {
+public class AbstractModelController implements IModelController {
 
 	@Override
 	public boolean afterDelete(boolean success) {
@@ -26,6 +26,18 @@ public abstract class AbstractModelController implements IModelController {
 	public boolean beforeSave(boolean newRecord) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public void setPO(OsxPO po) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadComplete(boolean success) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

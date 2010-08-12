@@ -56,6 +56,7 @@ import org.compiere.util.SecureEngine;
 import org.compiere.util.Trace;
 import org.compiere.util.Trx;
 import org.compiere.util.ValueNamePair;
+import org.opensixen.osgi.OsxPO;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -89,7 +90,7 @@ import org.w3c.dom.Element;
  *			<li>BF [2947622] The replication ID (Primary Key) is not working
  *			<li>https://sourceforge.net/tracker/?func=detail&aid=2947622&group_id=176962&atid=879332
  */
-public abstract class PO
+public abstract class PO extends OsxPO
 	implements Serializable, Comparator, Evaluatee
 {
 	/**
@@ -188,6 +189,8 @@ public abstract class PO
 			load(rs);		//	will not have virtual columns
 		else
 			load(ID, trxName);
+		
+		osx_loadControllers();	// Load the OSGi controllers
 	}   //  PO
 
 	/**
@@ -1293,7 +1296,7 @@ public abstract class PO
 			loadDefaults();
 			m_createNew = true;
 			setKeyInfo();	//	sets m_IDs
-			loadComplete(true);
+			osx_loadComplete(true);
 		}
 	}	//	load
 
@@ -1372,7 +1375,7 @@ public abstract class PO
 			DB.close(rs, pstmt);
 			rs = null; pstmt = null;
 		}
-		loadComplete(success);
+		osx_loadComplete(success);
 		return success;
 	}   //  load
 
@@ -1433,7 +1436,7 @@ public abstract class PO
 		}
 		m_createNew = false;
 		setKeyInfo();
-		loadComplete(success);
+		osx_loadComplete(success);
 		return success;
 	}	//	load
 
@@ -1495,7 +1498,7 @@ public abstract class PO
 		//	Overwrite
 		setStandardDefaults();
 		setKeyInfo();
-		loadComplete(success);
+		osx_loadComplete(success);
 		return success;
 	}	//	load
 
@@ -2017,7 +2020,7 @@ public abstract class PO
 			if (localTrx == null)
 				savepoint = trx.setSavepoint(null);
 			
-			if (!beforeSave(newRecord))
+			if (!osx_beforeSave(newRecord))
 			{
 				log.warning("beforeSave failed - " + toString());
 				if (localTrx != null)
@@ -2192,7 +2195,7 @@ public abstract class PO
 		//
 		try
 		{
-			success = afterSave (newRecord, success);
+			success = osx_afterSave (newRecord, success);
 		}
 		catch (Exception e)
 		{
@@ -2893,7 +2896,7 @@ public abstract class PO
 
 		try
 		{
-			if (!beforeDelete())
+			if (!osx_beforeDelete())
 			{
 				log.warning("beforeDelete failed");
 				return false;
@@ -3001,7 +3004,7 @@ public abstract class PO
 
 		try
 		{
-			success = afterDelete (success);
+			success = osx_afterDelete (success);
 		}
 		catch (Exception e)
 		{

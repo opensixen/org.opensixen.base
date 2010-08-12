@@ -1,7 +1,20 @@
 package org.opensixen.osgi.interfaces;
 
+import org.compiere.model.PO;
+import org.opensixen.osgi.OsxPO;
+
 public interface IModelController extends IService {
 
+	public static final String P_TABLENAME="tableName"; 
+	
+	/**
+	 * Establece el PO que llama a este objeto
+	 * Es llamado desde el contructor de PO, 
+	 * llamando indirectamente a OsxPO
+	 * @param po
+	 */
+	public void setPO(OsxPO po);
+	
 	/**
 	 * 	Executed after Delete operation.
 	 * 	@param success true if record deleted
@@ -29,5 +42,12 @@ public interface IModelController extends IService {
 	 *	@return true if record can be saved
 	 */
 	public boolean beforeSave(boolean newRecord);
+	
+	/**
+	 *  Load is complete
+	 * 	@param success success
+	 *  To be extended by sub-classes
+	 */
+	public void loadComplete (boolean success);
 	
 }
