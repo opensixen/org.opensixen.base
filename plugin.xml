@@ -5,5 +5,7 @@
    <extension-point id="org.opensixen.osgi.interfaces.ICentralizedIDGenerator" name="ICentralizedIDGenerator" schema="schema/org.opensixen.osgi.interfaces.ICentralizedIDGenerator.exsd"/>
    <extension-point id="org.opensixen.osgi.interfaces.IModelController" name="IModelController" schema="schema/org.opensixen.osgi.interfaces.IModelController.exsd"/>
    <extension-point id="org.opensixen.osgi.interfaces.IColumnCallout" name="IColumnCallout" schema="schema/org.opensixen.osgi.interfaces.IColumnCallout.exsd"/>
+   <extension-point id="org.compiere.db.CConnection" name="CConnection" schema="schema/org.compiere.db.CConnection.exsd"/>
+   <extension-point id="org.opensixen.osgi.interfaces.IApplicationServer" name="IApplicationServer" schema="schema/org.opensixen.osgi.interfaces.IApplicationServer.exsd"/>
 
 </plugin>

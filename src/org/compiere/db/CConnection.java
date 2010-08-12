@@ -41,6 +41,8 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Ini;
 import org.compiere.util.ValueNamePair;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.interfaces.IService;
 
 /**
  *  Adempiere Connection Descriptor
@@ -49,7 +51,7 @@ import org.compiere.util.ValueNamePair;
  *  @author     Marek Mosiewicz<marek.mosiewicz@jotel.com.pl> - support for RMI over HTTP
  *  @version    $Id: CConnection.java,v 1.5 2006/07/30 00:55:13 jjanke Exp $
  */
-public class CConnection implements Serializable, Cloneable
+public class CConnection implements Serializable, Cloneable, IService
 {
 	/**
 	 * 
@@ -113,7 +115,7 @@ public class CConnection implements Serializable, Cloneable
 				CConnection cc = null;
 				if (apps_host != null && Adempiere.isWebStartClient() && !CConnection.isServerEmbedded())
 				{
-					cc = new CConnection(apps_host);
+					cc = createConnection(apps_host);
 					cc.setConnectionProfile(CConnection.PROFILE_LAN);
 					cc.setAppsPort(ASFactory.getApplicationServer().getDefaultNamingServicePort());
 					if (cc.testAppsServer() == null)
@@ -125,7 +127,7 @@ public class CConnection implements Serializable, Cloneable
 				}
 				if (s_cc == null)
 				{
-					if (cc == null) cc = new CConnection(apps_host);
+					if (cc == null) cc = createConnection(apps_host);
 					CConnectionDialog ccd = new CConnectionDialog (cc);
 					s_cc = ccd.getConnection ();
 					if (!s_cc.isDatabaseOK() && !ccd.isCancel()) {
@@ -138,7 +140,7 @@ public class CConnection implements Serializable, Cloneable
 			}
 			else
 			{
-				s_cc = new CConnection (null);
+				s_cc = createConnection(null);
 				s_cc.setAttributes (attributes);
 			}
 			log.fine(s_cc.toString());
@@ -174,7 +176,7 @@ public class CConnection implements Serializable, Cloneable
 	public static CConnection get (String type, String db_host, int db_port,
 	  String db_name, String db_uid, String db_pwd)
 	{
-		CConnection cc = new CConnection (db_host);
+		CConnection cc = createConnection(db_host);
 		cc.setAppsHost (db_host); //  set Apps=DB
 		cc.setType (type);
 		cc.setDbHost (db_host);
@@ -1678,4 +1680,16 @@ public class CConnection implements Serializable, Cloneable
 						 Connection.TRANSACTION_READ_COMMITTED);
 		new CConnectionDialog(cc);
 	}	//	main
+	
+	private static CConnection createConnection(String app_host)	{
+		CConnection cc = Service.locate(CConnection.class);
+		if (cc == null)	{
+		 return new CConnection (app_host);
+		}
+		if (app_host != null)	{
+			cc.setDbHost(app_host);
+			cc.setAppsHost(app_host);
+		}
+		return cc;
+	}
 }	//  CConnection
