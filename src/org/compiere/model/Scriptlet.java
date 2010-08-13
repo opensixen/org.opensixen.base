@@ -26,6 +26,7 @@ import java.util.logging.Level;
 
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
+import org.opensixen.osgi.Activator;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -128,6 +129,9 @@ public class Scriptlet
 		}
 		Interpreter i = new Interpreter();
 		loadEnvironment(i);
+
+		// OSGi ClassLoader for base project
+		i.setClassLoader(Activator.class.getClassLoader());
 		try
 		{
 			log.config(m_script);
