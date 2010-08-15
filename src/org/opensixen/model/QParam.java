@@ -227,4 +227,14 @@ public class QParam {
 		return buff.toString();
 	}
 	
+	public static QParam[] get(String name, Object value)	{
+		QParam[] params = { new QParam(name, value)};
+		return params;
+	}
+	
+	public static QParam[] get(String name, int value)	{
+		QParam[] params = { new QParam(name, value)};
+		return params;
+	}
+	
 }

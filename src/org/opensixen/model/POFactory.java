@@ -23,6 +23,8 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.opensixen.util.NameObjectPair;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 public class POFactory {
 
 		
@@ -155,7 +157,7 @@ public class POFactory {
 	 * @return ResultSet with the result of the query.
 	 * @throws POException
 	 */	
-	protected static ResultSet get_Records(PO po, QParam[] params, String[] order, String trxName)	
+	protected static synchronized ResultSet get_Records(PO po, QParam[] params, String[] order, String trxName)	
 	throws POException {
 		
 		POInfo p_info = po.get_POInfo();
@@ -320,6 +322,22 @@ public class POFactory {
 		return null;
 	
 	}
+
+	/**
+	 * Get an List of records
+	 * @param <T>
+	 * @param ctx
+	 * @param clazz
+	 * @param param
+	 * @return
+	 * @throws POException
+	 */
+	public static <T extends PO> List<T> getList(Properties ctx, Class<T> clazz, QParam param)	{
+		QParam[] params = {param};
+		return getList(ctx, clazz, params, null, null);
+	}
+
+	
 	
 	/**
 	 * Get an List of records
@@ -402,9 +420,49 @@ public class POFactory {
 		}
 		catch (NoSuchMethodException e)	{throw new RuntimeException ("Error instanciando objetos.", e); }
 		catch (SQLException e)	{ throw new RuntimeException ("Error obteniendo el array de elmentos.", e);	}
-		catch (Exception e)	{ throw new RuntimeException(e);	}
-	
-		
+		catch (Exception e)	{ throw new RuntimeException(e);	}			
 	}
+	/**
+	 * Get record with this ID
+	 * @param <T>
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	public static <T extends PO> T get(Class<T> clazz, int id)	{
+		return get(Env.getCtx(), clazz, id, null);
+	}
+	
+	/**
+	 * Get record with this ID
+	 * @param <T>
+	 * @param ctx
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	public static <T extends PO> T get(Properties ctx, Class<T> clazz, int id)	{
+		return get(ctx, clazz, id, null);
+	}
+	
+	/**
+	 * Get record with this ID
+	 * @param <T>
+	 * @param ctx
+	 * @param clazz
+	 * @param id
+	 * @param trxName
+	 * @return
+	 */
+	public static <T extends PO> T get(Properties ctx, Class<T> clazz, int id, String trxName)	{
+        Constructor<T> po_constr;
+		try {
+			po_constr = clazz.getDeclaredConstructor(new Class[] { Properties.class, int.class, String.class });
+			T	po	=  po_constr.newInstance(new Object[] { ctx, 0, trxName });
+			return po;
+		} catch (NoSuchMethodException e)	{throw new RuntimeException ("Error instanciando objetos.", e); }
+		catch (Exception e)	{ throw new RuntimeException(e);	}			
+	}
+
 	
 }
