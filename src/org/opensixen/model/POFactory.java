@@ -1,6 +1,7 @@
 package org.opensixen.model;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -31,11 +32,6 @@ public class POFactory {
 	private static CLogger s_log = CLogger.getCLogger(POFactory.class);
 	
 	private static final Object NULL = new Object();
-	
-	protected static ResultSet get_Records(PO po, QParam[] params, String trxName)	
-	throws POException {
-		return get_Records(po, params, null, trxName);
-	}
 	
 	
 	private static void setColToStatement(POInfo p_info, CPreparedStatement pp, int statementColumnIndex, String columnName, int columnIndex, int dt, Class c, Object value) throws SQLException
@@ -148,6 +144,14 @@ public class POFactory {
 	}	
 
 	
+	public static <T extends PO> List<T> getList(Properties ctx, Class<T> clazz, QParam[] params, String[] order, String trxName)	{
+		try {
+			return getList_EX(ctx, clazz, params, order, trxName);
+		}
+		catch (POException e)	{
+			return null;
+		}
+	}
 	
 	/**
 	 * Return a ResultSet with the content of the query
@@ -157,9 +161,18 @@ public class POFactory {
 	 * @return ResultSet with the result of the query.
 	 * @throws POException
 	 */	
-	protected static synchronized ResultSet get_Records(PO po, QParam[] params, String[] order, String trxName)	
-	throws POException {
+	public static <T extends PO> List<T> getList_EX(Properties ctx, Class<T> clazz, QParam[] params, String[] order, String trxName)	throws POException{
+			T	po = null;
 		
+		Constructor<T> po_constr;
+		try {
+			po_constr = clazz.getDeclaredConstructor(new Class[] { Properties.class, int.class, String.class });
+			po	=  po_constr.newInstance(new Object[] { ctx, 0, trxName });
+		} catch (Exception e) {
+			throw new POException("No se puede instanciar el objeto", e);
+		} 
+        
+			
 		POInfo p_info = po.get_POInfo();
 		
 		/** Lista de parametros que se pasaran a pstmt	*/
@@ -245,13 +258,30 @@ public class POFactory {
 					throw new POException("Can not set parm: " + p.getColumnName(), e);
 				}
 			}
+			
+			
 			rs = pstmt.executeQuery();
+			ArrayList<T> poItems = new ArrayList<T>();
+			while (rs.next())	{
+				try {
+	            Constructor<T>	constructor	= clazz.getDeclaredConstructor(new Class[] { Properties.class, ResultSet.class, String.class });
+	            T	record	= constructor.newInstance(new Object[] { ctx, rs, trxName });
+	            poItems.add(record);
+				}
+				catch (Exception e)	{
+					throw new POException("No se puede instanciar el objeto", e);
+				}
+
+			}
+			rs.close();
+			pstmt.close();
+			return poItems;
+			
 		}
 		catch (SQLException e)	{
 			throw new POException ("Can not execute query: " + sql.toString(), e);
 		}
 
-		return rs;
 	}
 	
 	/**
@@ -291,36 +321,17 @@ public class POFactory {
 	 * @return
 	 * @throws POException
 	 */
-	public static <T extends PO> T get(Properties ctx, Class<T> clazz, QParam[] params, String trxName)	{
-		try{
-			   Constructor<T>	po_constr	= clazz.getDeclaredConstructor(new Class[] { Properties.class, int.class, String.class });
-	            T	po	= po_constr.newInstance(new Object[] { ctx, 0, trxName });
-	            T record;
-			ResultSet rs = get_Records(po, params, trxName); 
-		
-			if (rs.next())	{ 
-			    Constructor<T>	constructor	= clazz.getDeclaredConstructor(new Class[] { Properties.class, ResultSet.class, String.class });
-	            record	= constructor.newInstance(new Object[] { ctx, rs, trxName });
-			}
-			else {
-				rs.close();
-				return null;
-			}
-			
-			// Uggly hack
-			if (rs.next())	{
-				rs.close();
-				throw new POException("Multiple ocurrences when only one expected.\n" + QParam.debugParams(params));
-			}
-			
-			rs.close();
-			return record;
-		}
-		catch (NoSuchMethodException e)	{s_log.log(Level.SEVERE, "Error instanciando objetos.", e); }
-		catch (SQLException e)	{ s_log.log(Level.SEVERE, "Error obteniendo el array de elmentos.", e);	}
-		catch (Exception e)	{ s_log.log(Level.SEVERE,"Error opteniendo el objeto", e);	}
-		return null;
 	
+	public static <T extends PO> T get(Properties ctx, Class<T> clazz, QParam[] params, String trxName)	{
+		
+		List<T> items = getList(ctx, clazz, params, trxName);
+		
+		if (items.size() > 1)	{
+			s_log.severe("Multiple ocurrences when only one expected.\n" + QParam.debugParams(params));
+			return null;
+		}
+		
+		return items.get(0);
 	}
 
 	/**
@@ -400,7 +411,7 @@ public class POFactory {
 	 * @param trxName
 	 * @return
 	 * @throws POException
-	 */
+	 *//*
 	public static <T extends PO> List<T> getList(Properties ctx, Class<T> clazz, QParam[] param, String[] order, String trxName)	{
 		ArrayList<T> items = new ArrayList<T>();
 		try{
@@ -422,6 +433,7 @@ public class POFactory {
 		catch (SQLException e)	{ throw new RuntimeException ("Error obteniendo el array de elmentos.", e);	}
 		catch (Exception e)	{ throw new RuntimeException(e);	}			
 	}
+	*/
 	/**
 	 * Get record with this ID
 	 * @param <T>
