@@ -399,6 +399,15 @@ public class DB_PostgreSQL implements AdempiereDatabase
 	 **/
 	public String TO_CHAR (String columnName, int displayType, String AD_Language)
 	{
+		// Hack para bug #5
+		// Solventamos problema en base de datos, seguramente es un bugfix temporal!
+		if (true)	{
+			StringBuffer retValue = new StringBuffer("CAST (");
+			retValue.append(columnName);
+			retValue.append(" AS Text)");
+			return retValue.toString();
+		}
+		
 		StringBuffer retValue = new StringBuffer("TRIM(TO_CHAR(");
         retValue.append(columnName);
         
