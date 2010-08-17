@@ -326,6 +326,10 @@ public class POFactory {
 		
 		List<T> items = getList(ctx, clazz, params, trxName);
 		
+		if (items.size() == 0)	{
+			return null;
+		}
+		
 		if (items.size() > 1)	{
 			s_log.severe("Multiple ocurrences when only one expected.\n" + QParam.debugParams(params));
 			return null;
