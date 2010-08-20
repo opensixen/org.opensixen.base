@@ -32,6 +32,8 @@ import org.compiere.acct.Fact;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.interfaces.IModelValidator;
 
 /**
  *	Model Validation Engine
@@ -110,6 +112,7 @@ public class ModelValidationEngine
 				continue;
 			loadValidatorClasses(clients[i], classNames);
 		}
+		initOSGiModelValidators();
 		//logging to db will try to init ModelValidationEngine again!
 		//log.config(toString());
 		// System.out.println(toString());
@@ -850,6 +853,15 @@ public class ModelValidationEngine
 					log.warning("" + validator + ": " + e.getLocalizedMessage());
 				}
 			}
+		}
+	}
+	
+	
+	private void initOSGiModelValidators()	{
+		//TODO global vs client validators: create method booleand enabledAllClients, int[] getClientsEnabled
+		List<IModelValidator> validators = Service.list(IModelValidator.class);
+		for (IModelValidator validator:validators)		{
+			initialize(validator, null);
 		}
 	}
 }	//	ModelValidatorEngine
