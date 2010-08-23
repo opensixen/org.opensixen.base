@@ -11,6 +11,8 @@ public interface ICommand extends IService {
 
 	public static final String P_NAME="name";
 	
-	public int run();
+	public void prepare();
+	
+	public String doIt() throws Exception;
 	
 }
