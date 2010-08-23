@@ -149,6 +149,7 @@ public class POFactory {
 			return getList_EX(ctx, clazz, params, order, trxName);
 		}
 		catch (POException e)	{
+			s_log.log(Level.SEVERE, "Error obteniendo lista de objetos: " , e);
 			return null;
 		}
 	}
