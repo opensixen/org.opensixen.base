@@ -20,9 +20,11 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.compiere.process.DocumentTypeVerify;
 import org.compiere.util.AdempiereUserError;
 import org.compiere.util.CLogger;
@@ -32,6 +34,8 @@ import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.interfaces.IClientSetupValidator;
 
 /**
  * Initial Setup Model
@@ -91,6 +95,8 @@ public final class MSetup
 	private boolean         m_hasProject = false;
 	private boolean         m_hasMCampaign = false;
 	private boolean         m_hasSRegion = false;
+
+	private File m_accountingFile;
 
 	/**
 	 *  Create Client Info.
@@ -375,7 +381,7 @@ public final class MSetup
 		m_hasProject = hasProject;
 		m_hasMCampaign = hasMCampaign;
 		m_hasSRegion = hasSRegion;
-
+		m_accountingFile = AccountingFile;
 		//  Standard variables
 		m_info = new StringBuffer();
 		String name = null;
@@ -1275,6 +1281,13 @@ public final class MSetup
 			m_info.append(Msg.translate(m_lang, "C_CashBook_ID")).append("=").append(defaultName).append("\n");
 		else
 			log.log(Level.SEVERE, "CashBook NOT inserted");
+		
+		// OSGi setup
+		if (fireValidators() == false)		{
+			return false;
+		}
+		
+		
 		//
 		boolean success = m_trx.commit();
 		m_trx.close();
@@ -1359,5 +1372,25 @@ public final class MSetup
 			m_trx.rollback();
 			m_trx.close();
 		} catch (Exception e) {}
+	}
+	
+	/**
+	 * Run OSGi Validators
+	 * @return
+	 */
+	public boolean fireValidators()	{
+		List<IClientSetupValidator> validators = Service.list(IClientSetupValidator.class);
+		
+		if (validators == null)	{
+			return true;
+		}
+		
+		for (IClientSetupValidator validator:validators)	{
+			if (validator.doIt(m_ctx, getAD_Client_ID(), getAD_Org_ID(), m_clientName,m_accountingFile, m_trx.getTrxName()) == false)	{
+				return false;
+			}
+		}
+		return true;
+		
 	}
 }   //  MSetup

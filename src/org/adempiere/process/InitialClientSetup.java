@@ -238,6 +238,8 @@ public class InitialClientSetup extends SvrProcess
 			ms.rollback();
 			throw new AdempiereException("@AccountSetupError@");
 		}
+		
+		
 		addLog(ms.getInfo());
 
 		//	Create Print Documents

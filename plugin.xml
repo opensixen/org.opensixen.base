@@ -9,5 +9,6 @@
    <extension-point id="org.opensixen.osgi.interfaces.IApplicationServer" name="IApplicationServer" schema="schema/org.opensixen.osgi.interfaces.IApplicationServer.exsd"/>
    <extension-point id="org.opensixen.osgi.interfaces.IModelValidator" name="IModelValidator" schema="schema/org.opensixen.osgi.interfaces.IModelValidator.exsd"/>
    <extension-point id="org.opensixen.osgi.interfaces.ICommand" name="ICommand" schema="schema/org.opensixen.osgi.interfaces.ICommand.exsd"/>
+   <extension-point id="org.opensixen.osgi.interfaces.IClientSetupValidator" name="IClientSetupValidator" schema="schema/org.opensixen.osgi.interfaces.IClientSetupValidator.exsd"/>
 
 </plugin>

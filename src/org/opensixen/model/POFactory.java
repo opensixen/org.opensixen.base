@@ -302,6 +302,11 @@ public class POFactory {
 		return get(Env.getCtx(), clazz, params, null);
 	}
 	
+	public static <T extends PO> T get(Properties ctx, Class<T> clazz, QParam param, String trxName)	{
+		QParam[] params = {param};
+		return get(ctx, clazz, params, trxName);
+	}
+	
 	/**
 	 * Get a record
 	 * @param <T>
@@ -351,6 +356,12 @@ public class POFactory {
 	public static <T extends PO> List<T> getList(Properties ctx, Class<T> clazz, QParam param)	{
 		QParam[] params = {param};
 		return getList(ctx, clazz, params, null, null);
+	}
+	
+	
+	public static <T extends PO> List<T> getList(Properties ctx, Class<T> clazz, QParam param, String trxName)	{
+		QParam[] params = {param};
+		return getList(ctx, clazz, params, null, trxName);
 	}
 
 	
