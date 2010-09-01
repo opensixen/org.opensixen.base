@@ -1386,7 +1386,7 @@ public final class MSetup
 		}
 		
 		for (IClientSetupValidator validator:validators)	{
-			if (validator.doIt(m_ctx, getAD_Client_ID(), getAD_Org_ID(), m_clientName,m_accountingFile, m_trx.getTrxName()) == false)	{
+			if (validator.doIt(m_ctx, getAD_Client_ID(), getAD_Org_ID(), m_as, m_clientName,m_accountingFile, m_trx.getTrxName()) == false)	{
 				return false;
 			}
 		}
