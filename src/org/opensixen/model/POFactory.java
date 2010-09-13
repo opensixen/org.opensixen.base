@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.compiere.model.MTable;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.util.CLogger;
@@ -492,5 +493,25 @@ public class POFactory {
 		catch (Exception e)	{ throw new RuntimeException(e);	}			
 	}
 
+	
+	public static <T extends PO> Class<T> getClass(int AD_Table_ID)	{
+		String tableName = MTable.getTableName(Env.getCtx(), AD_Table_ID);
+		return (Class<T>) MTable.getClass(tableName);
+	}
+	
+	public static <T extends PO> T get(Properties ctx, int AD_Table_ID, int id, String trxName)	{
+        Constructor<T> po_constr;
+        Class clazz = MTable.getClass(MTable.getTableName(ctx, AD_Table_ID));
+        
+		try {
+			po_constr = clazz.getDeclaredConstructor(new Class[] { Properties.class, int.class, String.class });
+			T	po	=  po_constr.newInstance(new Object[] { ctx, 0, trxName });
+			return po;
+		} catch (NoSuchMethodException e)	{throw new RuntimeException ("Error instanciando objetos.", e); }
+		catch (Exception e)	{ throw new RuntimeException(e);	}			
+	}
+
+	
+	
 	
 }

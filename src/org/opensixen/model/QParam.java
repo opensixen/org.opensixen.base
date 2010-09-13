@@ -1,5 +1,6 @@
 package org.opensixen.model;
 
+import org.compiere.model.MQuery;
 import org.compiere.util.CLogger;
 
 public class QParam {
@@ -235,6 +236,26 @@ public class QParam {
 	public static QParam[] get(String name, int value)	{
 		QParam[] params = { new QParam(name, value)};
 		return params;
+	}
+	
+	/**
+	 * Convert QParams to MQuery
+	 * @param tableName
+	 * @param params
+	 * @return
+	 */
+	public static MQuery toMQuery(String tableName, QParam[] params)	{
+		MQuery query = new MQuery(tableName);
+		
+		if (params.length == 0)	{
+			return query;
+		}
+		
+		for (QParam param:params)	{
+			query.addRestriction(param.getParam_str(true), param.getCond(), false);
+		}
+		
+		return query;
 	}
 	
 }
