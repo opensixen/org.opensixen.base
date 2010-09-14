@@ -45,6 +45,9 @@ public class ExtensionList<T> implements Iterable<T>{
 		private int index = 0;
 
 		public boolean hasNext() {
+			if (elements == null)	{
+				return false;
+			}
 			iterateUntilAccepted();
 			return index<elements.length;
 		}
