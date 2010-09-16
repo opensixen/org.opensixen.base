@@ -68,9 +68,13 @@ public final class Adempiere
 	static public String	DB_VERSION		= "2010-06-14";
 
 	/** Product Name            */
-	static public final String	NAME 			= "ADempiere\u00AE";
+	static public String	NAME 			= "ADempiere\u00AE";
+	
+	/** Product Name            */
+	static public String	TITLE 			= "Adempiere";
+	
 	/** URL of Product          */
-	static public final String	URL				= "www.adempiere.org";
+	static public String	URL				= "www.adempiere.org";
 	/** 16*16 Product Image. **/
 	static private final String	s_File16x16		= "images/AD16.gif";
 	/** 32*32 Product Image.   	*/
@@ -82,15 +86,15 @@ public final class Adempiere
 	static private final String	s_file48x15		= "images/Adempiere.png";
 	static private final String	s_file48x15HR	= "images/AdempiereHR.png";
 	/** Support Email           */
-	static private String		s_supportEmail	= "";
+	static public String		s_supportEmail	= "";
 
 	/** Subtitle                */
-	static public final String	SUB_TITLE		= "Smart Suite ERP,CRM and SCM";
-	static public final String	ADEMPIERE_R		= "ADempiere\u00AE";
-	static public final String	COPYRIGHT		= "\u00A9 1999-2010 ADempiere\u00AE";
+	static public String	SUB_TITLE		= "Smart Suite ERP,CRM and SCM";
+	static public String	ADEMPIERE_R		= "ADempiere\u00AE";
+	static public String	COPYRIGHT		= "\u00A9 1999-2010 ADempiere\u00AE";
 
-	static private String		s_ImplementationVersion = null;
-	static private String		s_ImplementationVendor = null;
+	static public String		s_ImplementationVersion = null;
+	static public String		s_ImplementationVendor = null;
 
 	static private Image 		s_image16;
 	static private Image 		s_image48x15;
@@ -98,7 +102,7 @@ public final class Adempiere
 	static private ImageIcon 	s_imageIcon32;
 	static private ImageIcon 	s_imageIconLogo;
 	
-	static private final String ONLINE_HELP_URL = "http://www.adempiere.com/wiki/index.php/Manual";
+	static public String ONLINE_HELP_URL = "http://www.adempiere.com/wiki/index.php/Manual";
 
 	/**	Logging								*/
 	private static CLogger		log = null;
