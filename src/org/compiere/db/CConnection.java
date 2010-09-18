@@ -1527,7 +1527,7 @@ public class CConnection implements Serializable, Cloneable, IService
 	 *  @param svr Apps Server Status
 	 *  @throws Exception
 	 */
-	private void updateInfoFromServer (Status svr) throws Exception
+	protected void updateInfoFromServer (Status svr) throws Exception
 	{
 		if (svr == null)
 			throw new IllegalArgumentException ("AppsServer was NULL");
