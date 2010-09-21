@@ -65,7 +65,7 @@ public class Query
 	public static final String AGGREGATE_MIN		= "MIN";
 	public static final String AGGREGATE_MAX		= "MAX";
 	
-	private static CLogger log	= CLogger.getCLogger (Query.class);
+	protected static CLogger log	= CLogger.getCLogger (Query.class);
 	
 	private Properties ctx = null;
 	private MTable table = null;
@@ -634,7 +634,7 @@ public class Query
 	 * @param selectClause optional; if null the select clause will be build according to POInfo
 	 * @return final SQL
 	 */
-	private final String buildSQL(StringBuffer selectClause, boolean useOrderByClause)
+	protected final String buildSQL(StringBuffer selectClause, boolean useOrderByClause)
 	{
 		if (selectClause == null)
 		{
@@ -698,7 +698,7 @@ public class Query
 		return sql;
 	}
 	
-	private final ResultSet createResultSet (PreparedStatement pstmt) throws SQLException
+	protected final ResultSet createResultSet (PreparedStatement pstmt) throws SQLException
 	{
 		DB.setParameters(pstmt, parameters);
 		int i = 1 + (parameters != null ? parameters.length : 0);
