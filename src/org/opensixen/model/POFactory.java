@@ -68,35 +68,37 @@ public class POFactory {
 		StringBuffer sql = new StringBuffer();
 		ArrayList<Object> paramValues = new ArrayList<Object>();
 		
-		for (int i=0; i < params.length; i++)	{
-			// Comprobamos si el parametro es de tipo cadena
-			if (params[i].isCustom())	{
-				sql.append(" ").append(params[i].getParam_str((i==0))).append(" ");
-				continue;
+		if (params != null) 	{
+			for (int i=0; i < params.length; i++)	{
+				// Comprobamos si el parametro es de tipo cadena
+				if (params[i].isCustom())	{
+					sql.append(" ").append(params[i].getParam_str((i==0))).append(" ");
+					continue;
+				}
+				
+				// Comprobamos que el campo exista en la tabla
+				int index = p_info.getColumnIndex(params[i].getName());
+				if (index == -1)	{
+					throw new POException("The column is not present in PO: " + params[i].getName());
+				}
+				// Comprobamos si se trata de filtrar por una columna virtual
+				if (p_info.isVirtualColumn(index))
+				{
+					throw new POException ("Can not use a virtual column as a param: " + params[i].getName());
+				}
+				
+				// Si es el primero, no lleva condicion
+				if (i == 0 )	{
+					sql.append(params[i].getParam_str(true));	
+				}
+				else {
+					sql.append(" ").append(params[i].getParam_str());
+				}
+				
+				// Add value
+				paramValues.add(params[i].getValue());
+				
 			}
-			
-			// Comprobamos que el campo exista en la tabla
-			int index = p_info.getColumnIndex(params[i].getName());
-			if (index == -1)	{
-				throw new POException("The column is not present in PO: " + params[i].getName());
-			}
-			// Comprobamos si se trata de filtrar por una columna virtual
-			if (p_info.isVirtualColumn(index))
-			{
-				throw new POException ("Can not use a virtual column as a param: " + params[i].getName());
-			}
-			
-			// Si es el primero, no lleva condicion
-			if (i == 0 )	{
-				sql.append(params[i].getParam_str(true));	
-			}
-			else {
-				sql.append(" ").append(params[i].getParam_str());
-			}
-			
-			// Add value
-			paramValues.add(params[i].getValue());
-			
 		}
 		
 		// Add order

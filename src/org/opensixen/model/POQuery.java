@@ -19,13 +19,10 @@ import org.compiere.model.Query;
 import org.compiere.util.DB;
 
 /**
- * Extends Query adding support for 
+ * Extends Query adding support for custom class definition
  * 
  * @author Eloy Gomez
  * Indeos Consultoria http://www.indeos.es
- * @param <T>
- * @param <T>
- * @param <T>
  *
  */
 public class POQuery extends Query{
@@ -33,8 +30,6 @@ public class POQuery extends Query{
 	private String trxName;
 	
 	private Properties ctx;
-	
-	
 	
 	public POQuery(Properties ctx, MTable table, String whereClause,
 			String trxName) {
@@ -52,7 +47,6 @@ public class POQuery extends Query{
 	/**
 	 * Return a list of records
 	 */
-	@SuppressWarnings("unchecked")
 	public  <T extends PO > List<T> list(Class<T> clazz)	{
 		List<T> list = new ArrayList<T>();
 		String sql = buildSQL(null, true);
