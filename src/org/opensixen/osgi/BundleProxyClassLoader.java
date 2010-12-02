@@ -67,6 +67,6 @@ public class BundleProxyClassLoader extends ClassLoader {
 			}
 			catch (ClassNotFoundException e)	{}
 		}
-		throw new ClassCastException();
+		throw new ClassNotFoundException("Can't load class: " + name);
 	}
 }
