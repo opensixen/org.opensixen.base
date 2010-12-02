@@ -37,7 +37,6 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Ini;
-import org.compiere.util.Language;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -325,7 +324,7 @@ public class DB_PostgreSQL implements AdempiereDatabase
 		}
 		    //end vpj-cd 24/06/2005 e-evolution
 		//
-    	Convert.logMigrationScript(oraStatement, retValue[0]);
+    	Convert.logMigrationScript(oraStatement, retValue[0], null);
 		return retValue[0];
 	}   //  convertStatement
 
@@ -433,7 +432,8 @@ public class DB_PostgreSQL implements AdempiereDatabase
 				.append(Language.getLanguage(AD_Language).getDBdatePattern())
 				.append("'");
 		}
-		retValue.append("))");
+		retValue.append(")");
+		//*/
 		return retValue.toString();
 	}   //  TO_CHAR
 

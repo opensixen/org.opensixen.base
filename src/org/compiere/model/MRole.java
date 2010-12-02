@@ -51,6 +51,7 @@ import org.compiere.util.Trace;
  *  @author Jorg Janke
  *  @author Karsten Thiemann FR [ 1782412 ]
  *  @author Carlos Ruiz - globalqss - FR [ 1846929 ] - implement ASP
+ *  @contributor KittiU - FR [ 3062553 ] - Duplicated action in DocAction list for Multiple Role Users
  *  @version $Id: MRole.java,v 1.5 2006/08/09 16:38:47 jjanke Exp $
  */
 public final class MRole extends X_AD_Role
@@ -2029,7 +2030,9 @@ public final class MRole extends X_AD_Role
 		}
 		else if (excludes.size() > 1)
 		{
-			where.append("(" + whereColumnName + " IS NULL OR ");
+			//@Trifon - MySQL
+			// (C_PaymentTerm_ID IS NULL OR 
+			where.append("(").append(whereColumnName).append(" IS NULL OR "); // @Trifon
 			where.append(whereColumnName).append(" NOT IN (");
 			for (int ii = 0; ii < excludes.size(); ii++)
 			{
@@ -2037,7 +2040,8 @@ public final class MRole extends X_AD_Role
 					where.append(",");
 				where.append(excludes.get(ii));
 			}
-			where.append("))");
+			where.append(")");
+			where.append(")"); // @Trifon
 		}
 		log.finest(where.toString());
 		return where.toString();
@@ -2328,8 +2332,10 @@ public final class MRole extends X_AD_Role
 			{
 				if (sb.length() > 0)
 					sb.append(" AND ");
-				sb.append(" (" + keyColumnName + " IS NULL OR ");
-				sb.append(keyColumnName).append(lockedIDs).append(") ");
+				// @Trifon - MySQL // (C_PaymentTerm_ID IS NULL OR 
+				sb.append("(").append(keyColumnName).append(" IS NULL OR "); // @Trifon
+				sb.append(keyColumnName).append(lockedIDs);
+				sb.append(")"); // @Trifon
 			}
 		}
 		//
@@ -2454,7 +2460,7 @@ public final class MRole extends X_AD_Role
 			params.add(options[i]);
 		}
 		//
-		final String sql = "SELECT rl.Value FROM AD_Document_Action_Access a"
+		final String sql = "SELECT DISTINCT rl.Value FROM AD_Document_Action_Access a"
 				+ " INNER JOIN AD_Ref_List rl ON (rl.AD_Reference_ID=135 and rl.AD_Ref_List_ID=a.AD_Ref_List_ID)"
 				+ " WHERE a.IsActive='Y' AND a.AD_Client_ID=? AND a.C_DocType_ID=?" // #1,2
 					+ " AND rl.Value IN ("+sql_values+")"

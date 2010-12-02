@@ -19,10 +19,14 @@ package org.compiere.model;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -1278,6 +1282,11 @@ public class MInOut extends X_M_InOut implements DocAction
 		log.info(toString());
 		StringBuffer info = new StringBuffer();
 
+		// Set of shipped orders
+		// Use this set to determine what orders are shipped on
+		// this inout record.
+		Set<Integer> inOutOrders = new TreeSet<Integer>();
+		
 		//	For all lines
 		MInOutLine[] lines = getLines(false);
 		for (int lineIndex = 0; lineIndex < lines.length; lineIndex++)
@@ -1298,6 +1307,8 @@ public class MInOut extends X_M_InOut implements DocAction
 			if (sLine.getC_OrderLine_ID() != 0)
 			{
 				oLine = new MOrderLine (getCtx(), sLine.getC_OrderLine_ID(), get_TrxName());
+				// Add order id to set of orders
+				inOutOrders.add(oLine.getC_Order_ID());
 				log.fine("OrderLine - Reserved=" + oLine.getQtyReserved()
 					+ ", Delivered=" + oLine.getQtyDelivered());
 				if (isSOTrx())
@@ -1462,14 +1473,17 @@ public class MInOut extends X_M_InOut implements DocAction
 				{
 					if (isSOTrx()) {
 						oLine.setQtyDelivered(oLine.getQtyDelivered().subtract(Qty));
-						// Adjust allocated on order line
-						if (isStrictOrder && product!=null && product.isStocked()) 
+						// Adjust allocated on order line when sales transaction
+						if (isStrictOrder && product!=null && product.isStocked()) {
 							oLine.setQtyAllocated(oLine.getQtyAllocated().add(Qty));
+							// Make sure qty allocated never goes below (zero)
+							// which can happen when delivery rule is force
+							if (oLine.getQtyAllocated().signum()==-1)
+								oLine.setQtyAllocated(Env.ZERO);
+						}
 					} else {
 						oLine.setQtyDelivered(oLine.getQtyDelivered().add(Qty));
-						// Adjust allocated on order line
-						if (isStrictOrder && product!=null && product.isStocked()) 
-							oLine.setQtyAllocated(oLine.getQtyAllocated().subtract(Qty));
+						// No allocation adjustment on non SO-Trx
 					}
 					oLine.setDateDelivered(getMovementDate());	//	overwrite=last
 				}
@@ -1644,6 +1658,21 @@ public class MInOut extends X_M_InOut implements DocAction
 
 		// Set the definite document number after completed (if needed)
 		setDefiniteDocumentNo();
+		
+		// Update IsDelivered on orders
+		if (inOutOrders.size()>0) {
+			MOrder order;
+			for (Iterator<Integer> it = inOutOrders.iterator(); it.hasNext(); ) {
+				order = new MOrder(getCtx(), it.next().intValue(), get_TrxName());
+				try {
+					order.updateIsDelivered();
+				} catch (SQLException ee) {
+					log.warning("Could not update isDelivered flag on order " + order.getDocumentNo() + " : " + ee.getMessage());
+				}
+				order.saveEx(get_TrxName());
+			}
+		}
+		
 
 		m_processMsg = info.toString();
 		setProcessed(true);
