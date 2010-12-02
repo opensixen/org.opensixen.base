@@ -398,33 +398,20 @@ public class DB_PostgreSQL implements AdempiereDatabase
 	 **/
 	public String TO_CHAR (String columnName, int displayType, String AD_Language)
 	{
-		// Hack para bug #5
-		// Solventamos problema en base de datos, seguramente es un bugfix temporal!
-		if (true)	{
-			StringBuffer retValue = new StringBuffer("CAST (");
-			retValue.append(columnName);
-			retValue.append(" AS Text)");
-			return retValue.toString();
-		}
-		
-		StringBuffer retValue = new StringBuffer("TRIM(TO_CHAR(");
-        retValue.append(columnName);
-        
-        char d = '.';
-        char g = ',';
-        if ( !Language.isDecimalPoint(AD_Language))
-        {
-        	d = ',';
-        	g = '.';
-        }
-        
+		StringBuffer retValue = new StringBuffer("CAST (");
+		retValue.append(columnName);
+		retValue.append(" AS Text)");
+
 		//  Numbers
+		/*
 		if (DisplayType.isNumeric(displayType))
 		{
 			if (displayType == DisplayType.Amount)
-				retValue.append(",'999" + g + "999" + g + "999" + g + "990" + d + "00'");
+				retValue.append(" AS TEXT");
 			else
-				retValue.append(",'999" + g + "999" + g + "999" + g + "990" + d + "9999999999'");
+				retValue.append(" AS TEXT");			
+			//if (!Language.isDecimalPoint(AD_Language))      //  reversed
+			//retValue.append(",'NLS_NUMERIC_CHARACTERS='',.'''");
 		}
 		else if (DisplayType.isDate(displayType))
 		{
@@ -436,6 +423,7 @@ public class DB_PostgreSQL implements AdempiereDatabase
 		//*/
 		return retValue.toString();
 	}   //  TO_CHAR
+
 
 	/**
 	 * 	Return number as string for INSERT statements with correct precision
