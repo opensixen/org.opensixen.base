@@ -19,22 +19,7 @@ public class ResourceFinder {
 				return url;
 		}
 		return null;
-
-		/*
-		 * IConfigurationElement[] config =
-		 * Platform.getExtensionRegistry().getConfigurationElementsFor
-		 * (extensionPointId) try { for (IConfigurationElement e : config) {
-		 * System.out.println("Evaluating extension"); final Object o =
-		 * e.createExecutableExtension("class"); if (o instanceof IGreeter) {
-		 * ISafeRunnable runnable = new ISafeRunnable() {
-		 * 
-		 * @Override public void handleException(Throwable exception) {
-		 * System.out.println("Exception in client"); }
-		 * 
-		 * @Override public void run() throws Exception { ((IGreeter)
-		 * o).greet(); } }; SafeRunner.run(runnable); } } } catch (CoreException
-		 * ex) { System.out.println(ex.getMessage()); }
-		 */
+	
 	}
 
 }
