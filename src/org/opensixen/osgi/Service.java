@@ -25,6 +25,7 @@ import org.opensixen.osgi.interfaces.IServiceLocator;
  * This is a very simple factory for service locators
  * 
  * @author viola
+ * @author Eloy Gomez 
  * 
  */
 public class Service {

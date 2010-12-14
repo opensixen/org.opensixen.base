@@ -35,6 +35,7 @@ import org.opensixen.osgi.ServiceQuery;
  * 
  * In order to minimize equinox lookups, a filtering iterator is used. 
  * @author viola
+ * @author Eloy Gomez
  *
  * @param <T> The service this list holds implementations of.
  */

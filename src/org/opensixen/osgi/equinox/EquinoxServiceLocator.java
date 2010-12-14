@@ -30,6 +30,7 @@ import org.opensixen.osgi.interfaces.IServiceLocator;
  * The ids of extension points have to correspond to the interface names of the services.
  *  
  * @author viola
+ * @author Eloy Gomez
  *
  */
 public class EquinoxServiceLocator implements IServiceLocator {
