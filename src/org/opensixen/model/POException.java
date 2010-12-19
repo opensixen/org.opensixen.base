@@ -1,4 +1,4 @@
-﻿ /******* BEGIN LICENSE BLOCK *****
+﻿/******* BEGIN LICENSE BLOCK *****
  * Versión: GPL 2.0/CDDL 1.0/EPL 1.0
  *
  * Los contenidos de este fichero están sujetos a la Licencia
