@@ -138,4 +138,18 @@ public class BundleProxyClassLoader extends ClassLoader {
 		}
 		throw new ClassNotFoundException("Can't load class: " + name);
 	}
+	
+	
+	public static URL findResourceInAll(String name)	{
+		Bundle[] bundles = Activator.getContext().getBundles();
+		for (Bundle bundle:bundles)	{
+			URL resource = bundle.getResource(name);
+			if (resource != null)	{
+				return resource;
+			}
+		}
+		return null;
+	}
+	
+	
 }
