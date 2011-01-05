@@ -37,6 +37,8 @@ import org.compiere.model.MWarehouse;
 import org.compiere.util.AdempiereUserError;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.opensixen.osgi.AbstractDocGenerateModelValidator;
+import org.opensixen.osgi.interfaces.IDocGenerateModelValidator;
 
 /**
  *	Generate Shipments.
@@ -91,6 +93,7 @@ public class InOutGenerate extends SvrProcess
 	/** Last Storage					*/
 	private MStorage[]		m_lastStorages = null;
 
+	private IDocGenerateModelValidator[] docValidators = AbstractDocGenerateModelValidator.getDocGenerateModelValidator(getClass().getName());
 	
 	/**
 	 *  Prepare - e.g., get Parameters.
@@ -189,7 +192,22 @@ public class InOutGenerate extends SvrProcess
 			if (p_C_BPartner_ID != 0)
 				m_sql += " AND o.C_BPartner_ID=?";					//	#3
 		}
+		// Extra restrictions
+		for (IDocGenerateModelValidator validator: docValidators)	{
+			String rest = validator.getQueryRestrictionString(); 
+			if (rest != null)	{
+				m_sql += rest;
+			}
+		}
+		
 		m_sql += " ORDER BY M_Warehouse_ID, PriorityRule, M_Shipper_ID, C_BPartner_ID, C_BPartner_Location_ID, C_Order_ID";
+		// extra Order
+		for (IDocGenerateModelValidator validator: docValidators)	{
+			String orderStr = validator.getQueryOrderString(); 
+			if (orderStr != null)	{
+				m_sql += orderStr;
+			}
+		}
 	//	m_sql += " FOR UPDATE";
 
 		PreparedStatement pstmt = null;
@@ -238,6 +256,16 @@ public class InOutGenerate extends SvrProcess
 					&& (m_shipment.getC_BPartner_Location_ID() != order.getC_BPartner_Location_ID()
 						|| m_shipment.getM_Shipper_ID() != order.getM_Shipper_ID() )))
 					completeShipment();
+				// OSGi validator check
+				if (m_shipment != null)	{
+					for (IDocGenerateModelValidator validator: docValidators)	{
+						if (!validator.consolidateAllowed(order, m_shipment))	{
+							completeShipment();
+							continue;
+						}
+					}
+				}
+				
 				log.fine("check: " + order + " - DeliveryRule=" + order.getDeliveryRule());
 				//
 				Timestamp minGuaranteeDate = m_movementDate;
@@ -466,6 +494,11 @@ public class InOutGenerate extends SvrProcess
 				m_shipment.setC_BPartner_ID(orderLine.getC_BPartner_ID());
 			if (order.getC_BPartner_Location_ID() != orderLine.getC_BPartner_Location_ID())
 				m_shipment.setC_BPartner_Location_ID(orderLine.getC_BPartner_Location_ID());
+			// OSGi calls
+			for (IDocGenerateModelValidator validator:docValidators)	{
+				m_shipment = validator.afterCreate(order, m_shipment);
+			}
+			
 			if (!m_shipment.save())
 				throw new IllegalStateException("Could not create Shipment");
 		}

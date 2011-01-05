@@ -37,6 +37,8 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
+import org.opensixen.osgi.AbstractDocGenerateModelValidator;
+import org.opensixen.osgi.interfaces.IDocGenerateModelValidator;
 
 /**
  *	Generate Invoices
@@ -71,6 +73,8 @@ public class InvoiceGenerate extends SvrProcess
 	private int			m_line = 0;
 	/**	Business Partner		*/
 	private MBPartner	m_bp = null;
+	/** OSGi DocGenerateModelValidators		*/
+	private IDocGenerateModelValidator[] docValidators = AbstractDocGenerateModelValidator.getDocGenerateModelValidator(getClass().getName());
 	
 	/**
 	 *  Prepare - e.g., get Parameters.
@@ -130,8 +134,24 @@ public class InvoiceGenerate extends SvrProcess
 			sql = "SELECT C_Order.* FROM C_Order, T_Selection "
 				+ "WHERE C_Order.DocStatus='CO' AND C_Order.IsSOTrx='Y' "
 				+ "AND C_Order.C_Order_ID = T_Selection.T_Selection_ID "
-				+ "AND T_Selection.AD_PInstance_ID=? "
-				+ "ORDER BY C_Order.M_Warehouse_ID, C_Order.PriorityRule, C_Order.C_BPartner_ID, C_Order.Bill_Location_ID, C_Order.C_Order_ID";
+				+ "AND T_Selection.AD_PInstance_ID=? ";
+
+			// Extra restrictions
+			for (IDocGenerateModelValidator validator: docValidators)	{
+				String rest = validator.getQueryRestrictionString(); 
+				if (rest != null)	{
+					sql += rest;
+				}
+			}
+			sql += " ORDER BY C_Order.M_Warehouse_ID, C_Order.PriorityRule, C_Order.C_BPartner_ID, C_Order.Bill_Location_ID, C_Order.C_Order_ID";
+
+			// extra Order
+			for (IDocGenerateModelValidator validator: docValidators)	{
+				String orderStr = validator.getQueryOrderString(); 
+				if (orderStr != null)	{
+					sql += orderStr;
+				}
+			}
 		}
 		else
 		{
@@ -147,8 +167,24 @@ public class InvoiceGenerate extends SvrProcess
 			sql += " AND EXISTS (SELECT * FROM C_OrderLine ol "
 					+ "WHERE o.C_Order_ID=ol.C_Order_ID AND ol.QtyOrdered<>ol.QtyInvoiced) "
 				+ "AND o.C_DocType_ID IN (SELECT C_DocType_ID FROM C_DocType "
-					+ "WHERE DocBaseType='SOO' AND DocSubTypeSO NOT IN ('ON','OB','WR')) "
-				+ "ORDER BY M_Warehouse_ID, PriorityRule, C_BPartner_ID, Bill_Location_ID, C_Order_ID";
+					+ "WHERE DocBaseType='SOO' AND DocSubTypeSO NOT IN ('ON','OB','WR')) ";
+
+			// Extra restrictions
+			for (IDocGenerateModelValidator validator: docValidators)	{
+				String rest = validator.getQueryRestrictionString(); 
+				if (rest != null)	{
+					sql += rest;
+				}
+			}			
+			sql += " ORDER BY M_Warehouse_ID, PriorityRule, C_BPartner_ID, Bill_Location_ID, C_Order_ID";
+
+			// extra Order
+			for (IDocGenerateModelValidator validator: docValidators)	{
+				String orderStr = validator.getQueryOrderString(); 
+				if (orderStr != null)	{
+					sql += orderStr;
+				}
+			}
 		}
 	//	sql += " FOR UPDATE";
 		
@@ -198,6 +234,15 @@ public class InvoiceGenerate extends SvrProcess
 					|| (m_invoice != null 
 					&& m_invoice.getC_BPartner_Location_ID() != order.getBill_Location_ID()) )
 					completeInvoice();
+				// OSGi validator check
+				if (m_invoice != null)	{
+					for (IDocGenerateModelValidator validator: docValidators)	{
+						if (!validator.consolidateAllowed(order, m_invoice))	{
+							completeInvoice();
+							continue;
+						}
+					}
+				}
 				boolean completeOrder = MOrder.INVOICERULE_AfterOrderDelivered.equals(order.getInvoiceRule());
 				
 				//	Schedule After Delivery
@@ -349,6 +394,10 @@ public class InvoiceGenerate extends SvrProcess
 		if (m_invoice == null)
 		{
 			m_invoice = new MInvoice (order, 0, p_DateInvoiced);
+			// OSGi calls
+			for (IDocGenerateModelValidator validator:docValidators)	{
+				m_invoice = validator.afterCreate(order, m_invoice);
+			}
 			if (!m_invoice.save())
 				throw new IllegalStateException("Could not create Invoice (o)");
 		}
