@@ -243,7 +243,14 @@ public class M_Production_Run extends SvrProcess {
 				pl.setM_Product_ID(bomline.getM_Product_ID());
 				pl.setM_Locator_ID(pp.getM_Locator_ID());
 				pl.setM_ProductionPlan_ID(pp.getM_ProductionPlan_ID());
-				pl.setMovementQty(bomline.getQtyBOM().multiply(qty).negate());
+				// egomez: isPercentage??
+				if (bomline.isQtyPercentage())	{
+					BigDecimal percentQty = bomline.getQtyBatch().multiply(new BigDecimal(0.01)).multiply(qty).negate();
+					pl.setMovementQty(percentQty);
+				}
+				else {
+					pl.setMovementQty(bomline.getQtyBOM().multiply(qty).negate());	
+				}				
 				pl.saveEx();
 				components += 1;
 				
