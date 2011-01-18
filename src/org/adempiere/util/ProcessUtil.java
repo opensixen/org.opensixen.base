@@ -36,7 +36,8 @@ import org.opensixen.osgi.interfaces.IProcessCall;
  */
 public final class ProcessUtil {
 
-	public static String JASPER_STARTER_CLASS = "org.compiere.report.ReportStarter";
+	//public final static String JASPER_STARTER_CLASS = "org.compiere.report.ReportStarter";
+	public final static String JASPER_STARTER_CLASS = "org.opensixen.report.ReportStarterOSGI";
 
 	/**	Logger				*/
 	private static CLogger log = CLogger.getCLogger(ProcessUtil.class);
