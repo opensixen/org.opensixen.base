@@ -22,6 +22,9 @@ import org.compiere.util.Trx;
 import org.compiere.wf.MWFProcess;
 import org.compiere.wf.MWorkflow;
 import org.opensixen.osgi.BundleProxyClassLoader;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.ServiceQuery;
+import org.opensixen.osgi.interfaces.IProcessCall;
 
 /**
  * 
@@ -33,7 +36,7 @@ import org.opensixen.osgi.BundleProxyClassLoader;
  */
 public final class ProcessUtil {
 
-	public static final String JASPER_STARTER_CLASS = "org.compiere.report.ReportStarter";
+	public static String JASPER_STARTER_CLASS = "org.compiere.report.ReportStarter";
 
 	/**	Logger				*/
 	private static CLogger log = CLogger.getCLogger(ProcessUtil.class);
@@ -113,10 +116,11 @@ public final class ProcessUtil {
 	 * @param managedTrx false if trx is managed by caller
 	 * @return boolean
 	 */
-	public static boolean startJavaProcess(Properties ctx, ProcessInfo pi, Trx trx, boolean managedTrx) {
+	public static boolean startJavaProcess(Properties ctx, ProcessInfo pi, Trx trx, boolean managedTrx) {			
 		String className = pi.getClassName();
-		if (className == null) {
-			MProcess proc = new MProcess(ctx, pi.getAD_Process_ID(), trx.getTrxName());
+		MProcess proc = new MProcess(ctx, pi.getAD_Process_ID(), null);
+		
+		if (className == null) {									
 			if (proc.getJasperReport() != null)
 				className = JASPER_STARTER_CLASS;
 		}
@@ -156,7 +160,12 @@ public final class ProcessUtil {
 			pi.setSummary("No Instance for " + pi.getClassName(), true);
 			return false;
 		}
-		
+		// TODO: Modificar el codigo para limpiarlo y crear un metido getProcess, este metodo buscara proceso OSGI y si lo encuentra no tratara de instanciar la que no es.. 		
+		ServiceQuery query = new ServiceQuery(IProcessCall.P_VALUE, proc.getValue());
+		IProcessCall osgiProcess = Service.locate(IProcessCall.class, query);
+		if (osgiProcess != null)	{
+			process = osgiProcess;
+		}
 		boolean success = false;
 		try
 		{
