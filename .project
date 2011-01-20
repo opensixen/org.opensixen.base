@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>base</name>
+	<name>org.opensixen.base</name>
 	<comment></comment>
 	<projects>
 		<project>dbPort</project>
