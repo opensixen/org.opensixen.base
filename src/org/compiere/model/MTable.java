@@ -31,6 +31,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.opensixen.osgi.BundleProxyClassLoader;
 
 /**
  *	Persistent Table Model
@@ -161,7 +162,8 @@ public class MTable extends X_AD_Table
 		"org.compiere.print", "org.compiere.impexp",
 		"compiere.model",			//	globalqss allow compatibility with other plugins 	
 		"adempiere.model",			//	Extensions
-		"org.adempiere.model"
+		"org.adempiere.model",
+		"org.opensixen.model"		// Opensixen
 	};
 	
 	/**	Special Classes				*/
@@ -342,7 +344,10 @@ public class MTable extends X_AD_Table
 	{
 		try
 		{
-			Class<?> clazz = Class.forName(className);
+			
+			//Class<?> clazz = Class.forName(className);
+			// OSGi classloader
+			Class<?> clazz = BundleProxyClassLoader.getClass(className);
 			// Validate if the class is for specified tableName
 			if (tableName != null)
 			{
