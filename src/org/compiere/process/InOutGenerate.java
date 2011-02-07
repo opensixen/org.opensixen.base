@@ -513,6 +513,10 @@ public class InOutGenerate extends SvrProcess
 					.multiply(orderLine.getQtyEntered())
 					.divide(orderLine.getQtyOrdered(), 12, BigDecimal.ROUND_HALF_UP));
 			line.setLine(m_line + orderLine.getLine());
+			// OSGi calls
+			for (IDocGenerateModelValidator validator:docValidators)	{
+				line = validator.afterCreateLine(orderLine, line);
+			}
 			if (!line.save())
 				throw new IllegalStateException("Could not create Shipment Line");
 			log.fine(line.toString());
@@ -569,6 +573,10 @@ public class InOutGenerate extends SvrProcess
 				line.setQtyEntered(line.getMovementQty().multiply(orderLine.getQtyEntered())
 					.divide(orderLine.getQtyOrdered(), 12, BigDecimal.ROUND_HALF_UP));
 			line.setLine(m_line + orderLine.getLine());
+			// OSGi calls
+			for (IDocGenerateModelValidator validator:docValidators)	{
+				line = validator.afterCreateLine(orderLine, line);
+			}
 			if (!line.save())
 				throw new IllegalStateException("Could not create Shipment Line");
 			log.fine("ToDeliver=" + qty + "/" + deliver + " - " + line);
@@ -591,6 +599,10 @@ public class InOutGenerate extends SvrProcess
 				 MInOutLine line = new MInOutLine (m_shipment);
 				 line.setOrderLine(orderLine, 0, order.isSOTrx() ? toDeliver : Env.ZERO);
 				 line.setQty(toDeliver);
+				// OSGi calls
+				for (IDocGenerateModelValidator validator:docValidators)	{
+					line = validator.afterCreateLine(orderLine, line);
+				}
 			     if (!line.save())
 					 throw new IllegalStateException("Could not create Shipment Line");
 					 

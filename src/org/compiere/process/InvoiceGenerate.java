@@ -407,6 +407,10 @@ public class InvoiceGenerate extends SvrProcess
 		line.setQtyInvoiced(qtyInvoiced);
 		line.setQtyEntered(qtyEntered);
 		line.setLine(m_line + orderLine.getLine());
+		// OSGi calls
+		for (IDocGenerateModelValidator validator:docValidators)	{
+			line = validator.afterCreateLine(orderLine, line);
+		}
 		if (!line.save())
 			throw new IllegalStateException("Could not create Invoice Line (o)");
 		log.fine(line.toString());
@@ -452,6 +456,10 @@ public class InvoiceGenerate extends SvrProcess
 			line.setIsDescription(true);
 			line.setDescription(reference);
 			line.setLine(m_line + sLine.getLine() - 2);
+			// OSGi calls
+			for (IDocGenerateModelValidator validator:docValidators)	{
+				line = validator.afterCreateLine(sLine, line);
+			}
 			if (!line.save())
 				throw new IllegalStateException("Could not create Invoice Comment Line (sh)");
 			//	Optional Ship Address if not Bill Address
@@ -462,6 +470,10 @@ public class InvoiceGenerate extends SvrProcess
 				line.setIsDescription(true);
 				line.setDescription(addr.toString());
 				line.setLine(m_line + sLine.getLine() - 1);
+				// OSGi calls
+				for (IDocGenerateModelValidator validator:docValidators)	{
+					line = validator.afterCreateLine(sLine, line);
+				}
 				if (!line.save())
 					throw new IllegalStateException("Could not create Invoice Comment Line 2 (sh)");
 			}
@@ -475,6 +487,10 @@ public class InvoiceGenerate extends SvrProcess
 			line.setQtyEntered(sLine.getMovementQty());
 		line.setQtyInvoiced(sLine.getMovementQty());
 		line.setLine(m_line + sLine.getLine());
+		// OSGi calls
+		for (IDocGenerateModelValidator validator:docValidators)	{
+			line = validator.afterCreateLine(sLine, line);
+		}
 		if (!line.save())
 			throw new IllegalStateException("Could not create Invoice Line (s)");
 		//	Link

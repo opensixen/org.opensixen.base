@@ -63,8 +63,11 @@ package org.opensixen.osgi;
 import java.util.List;
 
 import org.compiere.model.MInOut;
+import org.compiere.model.MInOutLine;
 import org.compiere.model.MInvoice;
+import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
 import org.opensixen.osgi.interfaces.IDocGenerateModelValidator;
 
 /**
@@ -165,4 +168,18 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 		return target;
 	}
 
+	@Override
+	public MInOutLine afterCreateLine(MOrderLine source, MInOutLine target) {
+		return target;
+	}
+
+	@Override
+	public MInvoiceLine afterCreateLine(MOrderLine source, MInvoiceLine target) {
+		return target;
+	}
+
+	@Override
+	public MInvoiceLine afterCreateLine(MInOutLine source, MInvoiceLine target) {
+		return target;
+	}	
 }

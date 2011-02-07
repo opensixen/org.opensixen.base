@@ -61,8 +61,11 @@
 package org.opensixen.osgi.interfaces;
 
 import org.compiere.model.MInOut;
+import org.compiere.model.MInOutLine;
 import org.compiere.model.MInvoice;
+import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
 
 /**
  * IDocGenerateModelValidator 
@@ -106,6 +109,16 @@ public interface IDocGenerateModelValidator extends IService {
 	public MInOut afterCreate(MOrder source, MInOut target);
 	
 	/**
+	 * Return the target doc line updated with source info.
+	 * This method is called after create the source record.
+	 * 
+	 * @param source
+	 * @param target
+	 * @return
+	 */
+	public MInOutLine afterCreateLine(MOrderLine source, MInOutLine target);
+	
+	/**
 	 * Return the target doc updated with source info.
 	 * This method is called after create the source record.
 	 * 
@@ -115,7 +128,15 @@ public interface IDocGenerateModelValidator extends IService {
 	 */
 	public MInvoice afterCreate(MOrder source, MInvoice target);
 	
-	
+	/**
+	 * Return the target doc line updated with source info.
+	 * This method is called after create the source record.
+	 * 
+	 * @param source
+	 * @param target
+	 * @return
+	 */
+	public MInvoiceLine afterCreateLine(MOrderLine source, MInvoiceLine target);
 	/**
 	 * Return the target doc updated with source info.
 	 * This method is called after create the source record.
@@ -126,6 +147,18 @@ public interface IDocGenerateModelValidator extends IService {
 	 */
 	public MInvoice afterCreate(MInOut source, MInvoice target);
 
+	
+	/**
+	 * Return the target doc line updated with source info.
+	 * This method is called after create the source record.
+	 * 
+	 * @param source
+	 * @param target
+	 * @return
+	 */
+	public MInvoiceLine afterCreateLine(MInOutLine source, MInvoiceLine target);
+
+	
 	
 	/**
 	 * Return extra order query for the main source Doc query
