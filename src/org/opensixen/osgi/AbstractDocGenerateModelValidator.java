@@ -181,5 +181,11 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 	@Override
 	public MInvoiceLine afterCreateLine(MInOutLine source, MInvoiceLine target) {
 		return target;
+	}
+
+
+	@Override
+	public MInOutLine afterCreateLine(MInvoiceLine source, MInOutLine target) {
+		return target;
 	}	
 }

@@ -69,6 +69,9 @@ import org.compiere.model.MOrderLine;
 
 /**
  * IDocGenerateModelValidator 
+ * Used to insert customization in create from process
+ * 
+ * 
  *
  * @author Eloy Gomez
  * Indeos Consultoria http://www.indeos.es
@@ -100,7 +103,7 @@ public interface IDocGenerateModelValidator extends IService {
 	
 	/**
 	 * Return the target doc updated with source info.
-	 * This method is called after create the source record.
+	 * This method is called after create the target record.
 	 * 
 	 * @param source
 	 * @param target
@@ -110,7 +113,7 @@ public interface IDocGenerateModelValidator extends IService {
 	
 	/**
 	 * Return the target doc line updated with source info.
-	 * This method is called after create the source record.
+	 * This method is called after create the target record.
 	 * 
 	 * @param source
 	 * @param target
@@ -120,7 +123,7 @@ public interface IDocGenerateModelValidator extends IService {
 	
 	/**
 	 * Return the target doc updated with source info.
-	 * This method is called after create the source record.
+	 * This method is called after create the target record.
 	 * 
 	 * @param source
 	 * @param target
@@ -130,7 +133,7 @@ public interface IDocGenerateModelValidator extends IService {
 	
 	/**
 	 * Return the target doc line updated with source info.
-	 * This method is called after create the source record.
+	 * This method is called after create the target record.
 	 * 
 	 * @param source
 	 * @param target
@@ -139,7 +142,7 @@ public interface IDocGenerateModelValidator extends IService {
 	public MInvoiceLine afterCreateLine(MOrderLine source, MInvoiceLine target);
 	/**
 	 * Return the target doc updated with source info.
-	 * This method is called after create the source record.
+	 * This method is called after create the target record.
 	 * 
 	 * @param source
 	 * @param target
@@ -150,7 +153,7 @@ public interface IDocGenerateModelValidator extends IService {
 	
 	/**
 	 * Return the target doc line updated with source info.
-	 * This method is called after create the source record.
+	 * This method is called after create the target record.
 	 * 
 	 * @param source
 	 * @param target
@@ -171,5 +174,15 @@ public interface IDocGenerateModelValidator extends IService {
 	 * @return
 	 */
 	public String getQueryRestrictionString();
+
+	/**
+	 * Return the target doc line updated with source info.
+	 * This method is called after create the target record.
+	 * 
+	 * @param source
+	 * @param target
+	 * @return
+	 */
+	public MInOutLine afterCreateLine(MInvoiceLine source, MInOutLine target);
 	
 }
