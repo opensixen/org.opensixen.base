@@ -127,7 +127,13 @@ public class BundleProxyClassLoader extends ClassLoader {
 
 	
 	public static Class getClass(String name) throws ClassNotFoundException	{
-		Bundle[] bundles = Activator.getContext().getBundles();
+		BundleContext context = Activator.getContext(); 
+		
+		// If no context, we are outside OSGi.
+		if (context == null)	{
+			return Class.forName(name);
+		}
+		Bundle[] bundles = context.getBundles();
 		for (Bundle bundle:bundles)	{
 			try {
 				BundleProxyClassLoader classLoader = new BundleProxyClassLoader(bundle);
