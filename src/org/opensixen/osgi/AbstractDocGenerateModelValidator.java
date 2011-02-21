@@ -97,7 +97,7 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 	@Override
 	public boolean consolidateAllowed(MOrder source, MInOut target) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -106,7 +106,7 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 	@Override
 	public boolean consolidateAllowed(MOrder source, MInvoice target) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +115,7 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 	@Override
 	public boolean consolidateAllowed(MInOut source, MInvoice target) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 
