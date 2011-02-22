@@ -456,10 +456,7 @@ public class InvoiceGenerate extends SvrProcess
 			line.setIsDescription(true);
 			line.setDescription(reference);
 			line.setLine(m_line + sLine.getLine() - 2);
-			// OSGi calls
-			for (IDocGenerateModelValidator validator:docValidators)	{
-				line = validator.afterCreateLine(sLine, line);
-			}
+			
 			if (!line.save())
 				throw new IllegalStateException("Could not create Invoice Comment Line (sh)");
 			//	Optional Ship Address if not Bill Address
