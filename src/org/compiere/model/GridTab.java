@@ -47,6 +47,7 @@ import org.compiere.util.Evaluator;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.compiere.util.ValueNamePair;
+import org.opensixen.osgi.BundleProxyClassLoader;
 
 /**
  *	Tab Model.
@@ -2799,7 +2800,8 @@ public class GridTab implements DataStatusListener, Evaluatee, Serializable
 				{
 					if (methodStart != -1)      //  no class
 					{
-						Class<?> cClass = Class.forName(cmd.substring(0,methodStart));
+						//Class<?> cClass = Class.forName(cmd.substring(0,methodStart));
+						Class<?> cClass = BundleProxyClassLoader.getClass(cmd.substring(0,methodStart));
 						call = (Callout)cClass.newInstance();
 						method = cmd.substring(methodStart+1);
 					}
