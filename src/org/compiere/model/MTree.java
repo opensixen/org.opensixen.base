@@ -138,7 +138,7 @@ public class MTree extends MTree_Base
 			TreeType = TREETYPE_Organization;
 		else if (keyColumnName.equals("C_Project_ID"))
 			TreeType = TREETYPE_Project;
-		else if (keyColumnName.equals("M_ProductCategory_ID"))
+		else if (keyColumnName.equals("M_Product_Category_ID"))
 			TreeType = TREETYPE_ProductCategory;
 		else if (keyColumnName.equals("M_BOM_ID"))
 			TreeType = TREETYPE_BoM;
