@@ -431,8 +431,8 @@ public class InvoiceGenerate extends SvrProcess
 				throw new IllegalStateException("Could not create Invoice (s)");
 		}
 		//	Create Shipment Comment Line
-		if (m_ship == null 
-			|| m_ship.getM_InOut_ID() != ship.getM_InOut_ID())
+		if (!ignoreShipmentComment() && (m_ship == null 
+			|| m_ship.getM_InOut_ID() != ship.getM_InOut_ID()))
 		{
 			MDocType dt = MDocType.get(getCtx(), ship.getC_DocType_ID());
 			if (m_bp == null || m_bp.getC_BPartner_ID() != ship.getC_BPartner_ID())
@@ -499,6 +499,16 @@ public class InvoiceGenerate extends SvrProcess
 	}	//	createLine
 
 	
+	private boolean ignoreShipmentComment() {
+		// OSGi calls
+		for (IDocGenerateModelValidator validator:docValidators)	{
+			if (validator.ignoreShipmentComment())	{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * 	Complete Invoice
 	 */

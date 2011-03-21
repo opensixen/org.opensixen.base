@@ -187,5 +187,11 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 	@Override
 	public MInOutLine afterCreateLine(MInvoiceLine source, MInOutLine target) {
 		return target;
+	}
+
+
+	@Override
+	public boolean ignoreShipmentComment() {
+		return false;
 	}	
 }

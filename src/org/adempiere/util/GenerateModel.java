@@ -71,7 +71,8 @@ public class GenerateModel
 	 */
 	public static void main (String[] args)
 	{
-		Adempiere.startupEnvironment((args.length > 4 && args[4].equals("Client")));
+		Adempiere.startup(true);
+		//Adempiere.startupEnvironment((args.length > 4 && args[4].equals("Client")));
 		CLogMgt.setLevel(Level.FINE);
 		log.info("Generate Model   $Revision: 1.42 $");
 		log.info("----------------------------------");

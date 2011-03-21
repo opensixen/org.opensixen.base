@@ -185,4 +185,10 @@ public interface IDocGenerateModelValidator extends IService {
 	 */
 	public MInOutLine afterCreateLine(MInvoiceLine source, MInOutLine target);
 	
+	
+	/**
+	 * Return true if ignore shipment Commnts is desired
+	 * @return
+	 */
+	public boolean ignoreShipmentComment();
 }
