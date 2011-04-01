@@ -372,7 +372,8 @@ public class InOutGenerate extends SvrProcess
 						break;
 					}
 					//	Complete Line
-					else if (fullLine && MOrder.DELIVERYRULE_CompleteLine.equals(order.getDeliveryRule()))
+					else if (fullLine && (MOrder.DELIVERYRULE_CompleteLine.equals(order.getDeliveryRule()) 
+							|| MOrder.DELIVERYRULE_AfterReceipt.equals(order.getDeliveryRule())))
 					{
 						log.fine("CompleteLine - OnHand=" + onHand 
 							+ " (Unconfirmed=" + unconfirmedShippedQty
