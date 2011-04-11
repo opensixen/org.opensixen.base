@@ -3272,7 +3272,7 @@ public abstract class PO extends OsxPO
 	 *	@param whereClause optional where clause with alias "p" for acctBaseTable
 	 *	@return true if records inserted
 	 */
-	protected boolean insert_Accounting (String acctTable,
+	public boolean insert_Accounting (String acctTable,
 		String acctBaseTable, String whereClause)
 	{
 		if (s_acctColumns == null	//	cannot cache C_BP_*_Acct as there are 3
