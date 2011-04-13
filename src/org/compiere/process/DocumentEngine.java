@@ -914,7 +914,7 @@ public class DocumentEngine implements DocAction
 		//	Complete                    ..  CO
 		else if (docStatus.equals(DocumentEngine.STATUS_Completed))
 		{
-			options[index++] = DocumentEngine.ACTION_Close;
+			//	options[index++] = DocumentEngine.ACTION_Close;	// egomez: invalid Action
 		}
 		//	Waiting Payment
 		else if (docStatus.equals(DocumentEngine.STATUS_WaitingPayment)
@@ -940,7 +940,7 @@ public class DocumentEngine implements DocAction
 				|| docStatus.equals(DocumentEngine.STATUS_Invalid))
 			{
 				options[index++] = DocumentEngine.ACTION_Prepare;
-				options[index++] = DocumentEngine.ACTION_Close;
+				// options[index++] = DocumentEngine.ACTION_Close; // egomez
 				//	Draft Sales Order Quote/Proposal - Process
 				if ("Y".equals(isSOTrx)
 					&& ("OB".equals(orderType) || "ON".equals(orderType)))
@@ -955,7 +955,7 @@ public class DocumentEngine implements DocAction
 			else if (docStatus.equals(DocumentEngine.STATUS_WaitingPayment))
 			{
 				options[index++] = DocumentEngine.ACTION_ReActivate;
-				options[index++] = DocumentEngine.ACTION_Close;
+				//options[index++] = DocumentEngine.ACTION_Close;	//egomez
 			}
 		}
 		
@@ -975,7 +975,7 @@ public class DocumentEngine implements DocAction
 			if (docStatus.equals(DocumentEngine.STATUS_Completed))
 			{
 				options[index++] = DocumentEngine.ACTION_Void;
-				options[index++] = DocumentEngine.ACTION_Reverse_Correct;
+				//options[index++] = DocumentEngine.ACTION_Reverse_Correct;	// egomez: No funciona como se espera
 			}
 		}
 		/********************
