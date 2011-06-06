@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.adempiere.exceptions.DBException;
 import org.adempiere.exceptions.TaxCriteriaNotFoundException;
@@ -30,6 +31,9 @@ import org.adempiere.exceptions.TaxNotFoundException;
 import org.compiere.util.CLogMgt;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.opensixen.exceptions.TaxCriteriaNotImplemented;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.interfaces.ITaxFactory;
 
 /**
  *	Tax Handling
@@ -77,6 +81,20 @@ public class Tax
 		int billC_BPartner_Location_ID, int shipC_BPartner_Location_ID,
 		boolean IsSOTrx)
 	{
+		
+		// Try to find a tax factory via OSGi
+		ITaxFactory taxFactory = Service.locate(ITaxFactory.class);
+		if (taxFactory != null)	{
+			try {
+				return taxFactory.get(ctx, M_Product_ID, C_Charge_ID, billDate, shipDate, AD_Org_ID, M_Warehouse_ID, billC_BPartner_Location_ID, shipC_BPartner_Location_ID, IsSOTrx);
+			}
+			catch (TaxCriteriaNotFoundException e)	{
+				log.log(Level.WARNING, "Custom tax error: " , e);
+			}
+			catch (TaxCriteriaNotImplemented e)	{
+				log.info(e.toString());
+			}
+		}
 		if (M_Product_ID != 0)
 			return getProduct (ctx, M_Product_ID, billDate, shipDate, AD_Org_ID, M_Warehouse_ID,
 				billC_BPartner_Location_ID, shipC_BPartner_Location_ID, IsSOTrx);

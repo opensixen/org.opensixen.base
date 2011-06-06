@@ -12,5 +12,6 @@
    <extension-point id="org.opensixen.osgi.interfaces.IClientSetupValidator" name="IClientSetupValidator" schema="schema/org.opensixen.osgi.interfaces.IClientSetupValidator.exsd"/>
    <extension-point id="org.opensixen.osgi.interfaces.IDocGenerateModelValidator" name="org.opensixen.osgi.interfaces.IDocGenerateModelValidator" schema="schema/org.opensixen.osgi.interfaces.IDocGenerateModelValidator.exsd"/>
    <extension-point id="org.opensixen.osgi.interfaces.IProcessCall" name="org.opensixen.osgi.interfaces.IProcessCall" schema="schema/org.opensixen.osgi.interfaces.IProcessCall.exsd"/>
+   <extension-point id="org.opensixen.osgi.interfaces.ITaxFactory" name="org.opensixen.osgi.interfaces.ITaxFactory" schema="schema/org.opensixen.osgi.interfaces.ITaxFactory.exsd"/>
 
 </plugin>
