@@ -168,9 +168,12 @@ public class MTax extends X_C_Tax
 			return m_childTaxes;
 		//
 		//FR: [ 2214883 ] Remove SQL code and Replace for Query - red1
-		final String whereClause = COLUMNNAME_Parent_Tax_ID+"=?";
+		//final String whereClause = COLUMNNAME_Parent_Tax_ID+"=?";
+		// egomez: Change query to make use of c_tax_link
+		final String whereClause = "c_tax_id in (select linked_tax_id from c_tax_link where c_tax_id=?) or " + COLUMNNAME_Parent_Tax_ID+"=?";
+		
 		List<MTax> list = new Query(getCtx(), I_C_Tax.Table_Name, whereClause,  get_TrxName())
-			.setParameters(getC_Tax_ID())
+			.setParameters(new Object[]{getC_Tax_ID(), getC_Tax_ID()})
 			.setOnlyActiveRecords(true)
 			.list();	
 		//red1 - end -
