@@ -21,12 +21,15 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.compiere.model.I_M_AttributeSet;
+import org.compiere.model.I_M_Product;
 import org.compiere.model.MClient;
 import org.compiere.model.MLocator;
 import org.compiere.model.MProduct;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTransaction;
 import org.compiere.model.Query;
+import org.compiere.model.X_M_AttributeSet;
 import org.compiere.model.X_M_Production;
 import org.compiere.model.X_M_ProductionLine;
 import org.compiere.model.X_M_ProductionPlan;
@@ -134,7 +137,17 @@ public class M_Production_Run extends SvrProcess {
 						{
 							MLocator locator = MLocator.get(getCtx(), pline.getM_Locator_ID());
 							String MovementType = MTransaction.MOVEMENTTYPE_ProductionPlus;					
-							BigDecimal MovementQty = pline.getMovementQty();						
+							BigDecimal MovementQty = pline.getMovementQty();
+							
+							// Check attributes 
+							I_M_Product product = pline.getM_Product();
+							if (product.getM_AttributeSet_ID() != 0
+									&& product.getM_AttributeSet().getMandatoryType().equals(X_M_AttributeSet.MANDATORYTYPE_WhenShipping))	{
+								if (pline.getM_AttributeSetInstance_ID() == 0)	{
+									raiseError("@LinesWithoutProductAttribute@: " + product.getName(), "");
+								}
+							}
+							
 							if (MovementQty.signum() == 0)
 								continue ;
 							else if(MovementQty.signum() < 0)
