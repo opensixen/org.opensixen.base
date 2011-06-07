@@ -48,6 +48,9 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.compiere.util.ValueNamePair;
 import org.opensixen.osgi.BundleProxyClassLoader;
+import org.opensixen.osgi.Service;
+import org.opensixen.osgi.ServiceQuery;
+import org.opensixen.osgi.interfaces.IColumnCallout;
 
 /**
  *	Tab Model.
@@ -2732,6 +2735,44 @@ public class GridTab implements DataStatusListener, Evaluatee, Serializable
 		Object oldValue = field.getOldValue();
 		log.fine(field.getColumnName() + "=" + value
 			+ " (" + callout + ") - old=" + oldValue);
+		
+		// Find OSGi callouts
+		ServiceQuery query = new ServiceQuery(IColumnCallout.P_TABLENAME, getTableName());
+		query.put(IColumnCallout.P_COLUMNNAME, field.getColumnName());
+		
+		List<IColumnCallout> callouts = Service.list(IColumnCallout.class, query);
+
+		if (callouts != null && !callouts.isEmpty()) {
+			for(IColumnCallout co : callouts)
+			{
+				String retValue = "";
+
+				String cmd = co.getClass().getName();
+				//detect infinite loop
+				if (activeCallouts.contains(cmd)) continue;
+				try
+				{
+					activeCallouts.add(cmd);
+					retValue = co.start(m_vo.ctx, m_vo.WindowNo, this, field, value, oldValue);
+				}
+				catch (Exception e)
+				{
+					log.log(Level.SEVERE, "start", e);
+					retValue = 	"Callout Invalid: " + e.toString();
+					return retValue;
+				}
+				finally
+				{
+					activeCallouts.remove(cmd);
+				}
+				if (!Util.isEmpty(retValue))		//	interrupt on first error
+				{
+					log.severe (retValue);
+					return retValue;
+				}
+			}
+		}
+	
 
 		StringTokenizer st = new StringTokenizer(callout, ";,", false);
 		while (st.hasMoreTokens())      //  for each callout

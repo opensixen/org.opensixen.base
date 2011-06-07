@@ -17,9 +17,8 @@
          </appinfo>
       </annotation>
       <complexType>
-         <choice>
-            <choice minOccurs="0" maxOccurs="unbounded">
-            </choice>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="callout" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="client">
+   <element name="callout">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
