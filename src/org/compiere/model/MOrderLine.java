@@ -29,6 +29,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
+import org.opensixen.interfaces.DocLine;
 
 /**
  *  Order Line Model.
@@ -52,7 +53,7 @@ import org.compiere.util.Trx;
  * 				invoice line for a product on a price list that includes tax, the net amount is
  * 				incorrectly calculated.
  */
-public class MOrderLine extends X_C_OrderLine
+public class MOrderLine extends X_C_OrderLine implements DocLine
 {
 	/**
 	 * 

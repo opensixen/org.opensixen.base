@@ -40,6 +40,8 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.eevolution.model.MPPProductBOM;
 import org.eevolution.model.MPPProductBOMLine;
+import org.opensixen.model.TaxCalculator;
+import org.opensixen.model.TaxLine;
 
 
 /**
@@ -1529,7 +1531,7 @@ public class MInvoice extends X_C_Invoice implements DocAction
 	 * 	Calculate Tax and Total
 	 * 	@return true if calculated
 	 */
-	public boolean calculateTaxTotal()
+	public boolean calculateTaxTotal_()
 	{
 		log.fine("");
 		//	Delete Taxes
@@ -1600,6 +1602,46 @@ public class MInvoice extends X_C_Invoice implements DocAction
 		return true;
 	}	//	calculateTaxTotal
 
+	/**
+	 * 	Calculate Tax and Total
+	 * 	@return true if calculated
+	 */
+	public boolean calculateTaxTotal() {
+		log.fine("");
+		//	Delete Taxes
+		DB.executeUpdateEx("DELETE C_InvoiceTax WHERE C_Invoice_ID=" + getC_Invoice_ID(), get_TrxName());
+		m_taxes = null;
+		
+		BigDecimal totalLines = Env.ZERO;		
+		MInvoiceLine[] docLines = getLines();		
+		// Set total lines
+		for (MInvoiceLine line:docLines)	{
+			totalLines = totalLines.add(line.getLineNetAmt());
+		}
+		// Set document total lines
+		setTotalLines(totalLines);
+
+		BigDecimal grandTotal = totalLines;
+		
+		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isTaxIncluded(), getPrecision());
+		for (TaxLine line:taxLines)	{
+			MInvoiceTax tax = new MInvoiceTax(getCtx(), 0, get_TrxName());
+			tax.setC_Invoice_ID(getC_Invoice_ID());
+			tax.setC_Tax_ID(line.getTax().getC_Tax_ID());
+			tax.setIsTaxIncluded(isTaxIncluded());
+			tax.setPrecision(getPrecision());
+			tax.setTaxAmt(line.getTaxAmt());
+			tax.setTaxBaseAmt(line.getTaxBaseAmt());
+			tax.saveEx();
+			grandTotal = grandTotal.add(line.getTaxAmt());
+		}
+		// Set grand total
+		setGrandTotal(grandTotal);
+		return true;
+	}
+	
+	
+	
 
 	/**
 	 * 	(Re) Create Pay Schedule

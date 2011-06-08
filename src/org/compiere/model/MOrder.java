@@ -41,6 +41,8 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.model.MPPProductBOM;
 import org.eevolution.model.MPPProductBOMLine;
+import org.opensixen.model.TaxCalculator;
+import org.opensixen.model.TaxLine;
 
 
 /**
@@ -1597,7 +1599,7 @@ public class MOrder extends X_C_Order implements DocAction
 	 * 	Calculate Tax and Total
 	 * 	@return true if tax total calculated
 	 */
-	public boolean calculateTaxTotal()
+	public boolean calculateTaxTotal_()
 	{
 		log.fine("");
 		//	Delete Taxes
@@ -1671,6 +1673,44 @@ public class MOrder extends X_C_Order implements DocAction
 		setGrandTotal(grandTotal);
 		return true;
 	}	//	calculateTaxTotal
+	
+	/**
+	 * 	Calculate Tax and Total
+	 * 	@return true if calculated
+	 */
+	public boolean calculateTaxTotal() {
+		log.fine("");
+		//	Delete Taxes
+		DB.executeUpdateEx("DELETE C_OrderTax WHERE C_Order_ID=" + getC_Order_ID(), get_TrxName());
+		m_taxes = null;
+		
+		BigDecimal totalLines = Env.ZERO;		
+		MOrderLine[] docLines = getLines();		
+		// Set total lines
+		for (MOrderLine line:docLines)	{
+			totalLines = totalLines.add(line.getLineNetAmt());
+		}
+		// Set document total lines
+		setTotalLines(totalLines);
+
+		BigDecimal grandTotal = totalLines;
+		
+		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isTaxIncluded(), getPrecision());
+		for (TaxLine line:taxLines)	{
+			MOrderTax tax = new MOrderTax(getCtx(), 0, get_TrxName());
+			tax.setC_Order_ID(getC_Order_ID());
+			tax.setC_Tax_ID(line.getTax().getC_Tax_ID());
+			tax.setIsTaxIncluded(isTaxIncluded());
+			tax.setPrecision(getPrecision());
+			tax.setTaxAmt(line.getTaxAmt());
+			tax.setTaxBaseAmt(line.getTaxBaseAmt());
+			tax.saveEx();
+			grandTotal = grandTotal.add(line.getTaxAmt());
+		}
+		// Set grand total
+		setGrandTotal(grandTotal);
+		return true;
+	}
 	
 	
 	/**
