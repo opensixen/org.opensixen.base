@@ -1623,7 +1623,7 @@ public class MInvoice extends X_C_Invoice implements DocAction
 
 		BigDecimal grandTotal = totalLines;
 		
-		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isTaxIncluded(), getPrecision());
+		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isSOTrx(), isTaxIncluded(), getPrecision());
 		for (TaxLine line:taxLines)	{
 			MInvoiceTax tax = new MInvoiceTax(getCtx(), 0, get_TrxName());
 			tax.setC_Invoice_ID(getC_Invoice_ID());

@@ -1695,7 +1695,7 @@ public class MOrder extends X_C_Order implements DocAction
 
 		BigDecimal grandTotal = totalLines;
 		
-		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isTaxIncluded(), getPrecision());
+		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isSOTrx() ,isTaxIncluded(), getPrecision());
 		for (TaxLine line:taxLines)	{
 			MOrderTax tax = new MOrderTax(getCtx(), 0, get_TrxName());
 			tax.setC_Order_ID(getC_Order_ID());

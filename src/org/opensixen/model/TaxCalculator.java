@@ -76,17 +76,31 @@ import org.opensixen.interfaces.DocLine;
  * 
  * Tax calculator 
  * 
+ * Calculate taxes for documents
+ * 
  * @author Eloy Gomez
  * Indeos Consultoria http://www.indeos.es
  *
  */
 public class TaxCalculator {
 
-	public static List<TaxLine> calc(Properties ctx, DocLine[] lines, boolean taxIncluded, int scale)	{
-		
+	
+	/**
+	 * Calculate tax forom lines
+	 * @param ctx
+	 * @param lines
+	 * @param taxIncluded
+	 * @param scale
+	 * @return
+	 */
+	public static List<TaxLine> calc(Properties ctx, DocLine[] lines, boolean isSOTrx, boolean taxIncluded, int scale)	{
+		// Cache for taxes
 		HashMap<Integer, MTax[]> cache_tax = new HashMap<Integer,MTax[]>();
+		
+		// ArrayList with the taxes of this document
 		ArrayList<TaxLine> taxes = new ArrayList<TaxLine>();
 		
+		// for each line, get their tax and calculeta
 		for (int i=0; i < lines.length; i++)	{
 			int C_Tax_ID = lines[i].getC_Tax_ID();
 			MTax[] line_taxes = null;
@@ -107,6 +121,7 @@ public class TaxCalculator {
 				cache_tax.put(C_Tax_ID, line_taxes);
 			}
 			
+			// For each tax in this line
 			for (int x=0; x < line_taxes.length; x++)	{
 				// calculate tax
 				MTax tax = line_taxes[x];
@@ -115,7 +130,11 @@ public class TaxCalculator {
 				if (tax.isDocumentLevel() == false) {
 					taxAmt = tax.calculateTax(lineNet, taxIncluded, scale);
 				}
-				
+				// Only aply taxes in Sales or purchause type match
+				if ((tax.getSOPOType().equals(tax.SOPOTYPE_PurchaseTax) && isSOTrx) 
+						|| (tax.getSOPOType().equals(tax.SOPOTYPE_SalesTax) && isSOTrx == false))	{
+					continue;
+				}
 				boolean find = false;
 				// If there are lines with the same tax
 				// plus amounts
@@ -136,7 +155,9 @@ public class TaxCalculator {
 			}
 		}
 		
-		// Fixup document Level taxes
+		// After calc each tax in each line
+		// fixup document Level taxes
+		// recalculating at doc level
 		for (TaxLine line:taxes)	{
 			// if this tax is doc level
 			// recalculate from tax base total
