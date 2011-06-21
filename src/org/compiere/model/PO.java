@@ -1238,6 +1238,7 @@ public abstract class PO extends OsxPO
 					|| colName.equals("AD_Client_ID")
 					|| colName.equals("AD_Org_ID")
 					|| colName.equals("Processing")
+					|| colName.equals("DocumentNo")
 					)
 					;	//	ignore
 				else
@@ -1268,6 +1269,7 @@ public abstract class PO extends OsxPO
 					|| colName.equals("AD_Client_ID")
 					|| colName.equals("AD_Org_ID")
 					|| colName.equals("Processing")
+					|| colName.equals("DocumentNo")
 					)
 					;	//	ignore
 				else
