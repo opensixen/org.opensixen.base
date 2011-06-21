@@ -51,6 +51,7 @@ import org.opensixen.osgi.BundleProxyClassLoader;
 import org.opensixen.osgi.Service;
 import org.opensixen.osgi.ServiceQuery;
 import org.opensixen.osgi.interfaces.IColumnCallout;
+import org.opensixen.osgi.interfaces.IStatusBarTrxInfo;
 
 /**
  *	Tab Model.
@@ -1682,6 +1683,17 @@ public class GridTab implements DataStatusListener, Evaluatee, Serializable
 	 */
 	public String getTrxInfo()
 	{
+		// Try osgi services
+		ServiceQuery query = new ServiceQuery(IStatusBarTrxInfo.P_TABLENAME, m_vo.TableName);
+		List<IStatusBarTrxInfo> services = Service.list(IStatusBarTrxInfo.class, query);
+		if (services.size() > 0)	{
+			StringBuffer buff = new StringBuffer();
+			for (IStatusBarTrxInfo service:services)	{
+				buff.append(service.getTrxInfo(m_vo));
+				buff.append(" ");
+			}
+			return buff.toString();
+		}
 		//	InvoiceBatch
 		if (m_vo.TableName.startsWith("C_InvoiceBatch"))
 		{

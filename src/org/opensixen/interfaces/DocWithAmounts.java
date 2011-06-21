@@ -1,4 +1,4 @@
-/******* BEGIN LICENSE BLOCK *****
+ /******* BEGIN LICENSE BLOCK *****
  * Versión: GPL 2.0/CDDL 1.0/EPL 1.0
  *
  * Los contenidos de este fichero están sujetos a la Licencia
@@ -58,117 +58,43 @@
  * lo gobiernan,  GPL 2.0/CDDL 1.0/EPL 1.0.
  *
  * ***** END LICENSE BLOCK ***** */
-
-package org.opensixen.model;
+package org.opensixen.interfaces;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-
-import org.compiere.model.MTax;
-import org.compiere.util.Env;
-import org.opensixen.interfaces.DocLine;
-import org.opensixen.interfaces.DocWithAmounts;
-
+import java.sql.Timestamp;
 
 /**
+ * DocWithAmounts
  * 
- * Tax calculator 
- * 
- * Calculate taxes for documents
- * 
+ *  Interface to documents with amounts as grand amount , lines amonunt...
+ *
  * @author Eloy Gomez
  * Indeos Consultoria http://www.indeos.es
- *
  */
-public class TaxCalculator {
-
+public interface DocWithAmounts {
 	
-	/**
-	 * Calculate tax forom lines
-	 * @param ctx
-	 * @param lines
-	 * @param taxIncluded
-	 * @param scale
-	 * @return
-	 */
-	public static List<TaxLine> calc(Properties ctx, DocWithAmounts doc, DocLine[] lines)	{
-		// Cache for taxes
-		HashMap<Integer, MTax[]> cache_tax = new HashMap<Integer,MTax[]>();
-		
-		// ArrayList with the taxes of this document
-		ArrayList<TaxLine> taxes = new ArrayList<TaxLine>();
-		
-		// for each line, get their tax and calculeta
-		for (int i=0; i < lines.length; i++)	{
-			int C_Tax_ID = lines[i].getC_Tax_ID();
-			MTax[] line_taxes = null;
-			
-			// Get taxes from cache 
-			if (cache_tax.containsKey(C_Tax_ID))	{
-				line_taxes = cache_tax.get(C_Tax_ID);
-			}
-			// Or load and caching
-			else {
-				MTax base_tax = new MTax(ctx, C_Tax_ID, null);
-				if (base_tax.isSummary())	{
-					line_taxes = base_tax.getChildTaxes(false);
-				}
-				else {
-					line_taxes = new MTax[]{base_tax};
-				}
-				cache_tax.put(C_Tax_ID, line_taxes);
-			}
-			
-			// For each tax in this line
-			for (int x=0; x < line_taxes.length; x++)	{
-				// calculate tax
-				MTax tax = line_taxes[x];
-				BigDecimal lineNet = lines[i].getLineNetAmt();
-				BigDecimal taxAmt = Env.ZERO;
-				if (tax.isDocumentLevel() == false) {
-					taxAmt = tax.calculateTax(lineNet, doc.isTaxIncluded(), doc.getPrecision());
-				}
-				// Only aply taxes in Sales or purchause type match
-				if ((tax.getSOPOType().equals(tax.SOPOTYPE_PurchaseTax) && doc.isSOTrx()) 
-						|| (tax.getSOPOType().equals(tax.SOPOTYPE_SalesTax) && doc.isSOTrx() == false))	{
-					continue;
-				}
-				boolean find = false;
-				// If there are lines with the same tax
-				// plus amounts
-				for (TaxLine l:taxes)	{
-					if (l.getTax().getC_Tax_ID() == tax.getC_Tax_ID())	{
-						l.addTaxAmt(taxAmt);
-						l.addTaxBaseAmt(lineNet);
-						find = true;
-						continue;
-					}
-				}
-
-				// If no find, create new lines
-				if (!find) {
-					TaxLine l = new TaxLine(tax, taxAmt, lineNet);
-					taxes.add(l);
-				}
-			}
-		}
-		
-		// After calc each tax in each line
-		// fixup document Level taxes
-		// recalculating at doc level
-		for (TaxLine line:taxes)	{
-			// if this tax is doc level
-			// recalculate from tax base total
-			if (line.getTax().isDocumentLevel())	{
-				BigDecimal amt = line.getTax().calculateTax(line.getTaxBaseAmt(), doc.isTaxIncluded(), doc.getPrecision());
-				line.setTaxAmt(amt);
-			}
-		}
-				
-		return taxes;
-	}
+	public int getC_Currency_ID();
 	
+	public String getCurrencyISO();
+	
+	public Timestamp getDateAcct();
+	
+	public int getC_ConversionType_ID();
+	
+	public int getAD_Client_ID();
+	
+	public int getAD_Org_ID();
+	
+	public BigDecimal getTotalLines();
+	
+	public BigDecimal getGrandTotal();
+	
+	public boolean isSOTrx();
+	
+	public boolean isTaxIncluded();
+	
+	public int getPrecision();
+	
+	public boolean is_new();
+
 }

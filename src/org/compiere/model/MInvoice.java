@@ -40,6 +40,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.eevolution.model.MPPProductBOM;
 import org.eevolution.model.MPPProductBOMLine;
+import org.opensixen.interfaces.DocWithAmounts;
 import org.opensixen.model.TaxCalculator;
 import org.opensixen.model.TaxLine;
 
@@ -58,7 +59,7 @@ import org.opensixen.model.TaxLine;
  *			@see http://sourceforge.net/tracker2/?func=detail&atid=879335&aid=2520591&group_id=176962
  *  Modifications: Added RMA functionality (Ashley Ramdass)
  */
-public class MInvoice extends X_C_Invoice implements DocAction
+public class MInvoice extends X_C_Invoice implements DocAction, DocWithAmounts
 {
 	/**
 	 * 
@@ -1623,7 +1624,7 @@ public class MInvoice extends X_C_Invoice implements DocAction
 
 		BigDecimal grandTotal = totalLines;
 		
-		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isSOTrx(), isTaxIncluded(), getPrecision());
+		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), this, getLines());
 		for (TaxLine line:taxLines)	{
 			MInvoiceTax tax = new MInvoiceTax(getCtx(), 0, get_TrxName());
 			tax.setC_Invoice_ID(getC_Invoice_ID());

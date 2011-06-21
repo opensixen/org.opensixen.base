@@ -41,6 +41,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.model.MPPProductBOM;
 import org.eevolution.model.MPPProductBOMLine;
+import org.opensixen.interfaces.DocWithAmounts;
 import org.opensixen.model.TaxCalculator;
 import org.opensixen.model.TaxLine;
 
@@ -65,7 +66,7 @@ import org.opensixen.model.TaxLine;
  * @author Michael Judd, www.akunagroup.com
  *          <li>BF [ 2804888 ] Incorrect reservation of products with attributes
  */
-public class MOrder extends X_C_Order implements DocAction
+public class MOrder extends X_C_Order implements DocAction, DocWithAmounts
 {
 	/**
 	 * 
@@ -1695,7 +1696,7 @@ public class MOrder extends X_C_Order implements DocAction
 
 		BigDecimal grandTotal = totalLines;
 		
-		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), getLines(), isSOTrx() ,isTaxIncluded(), getPrecision());
+		List<TaxLine> taxLines = TaxCalculator.calc(getCtx(), this, getLines());
 		for (TaxLine line:taxLines)	{
 			MOrderTax tax = new MOrderTax(getCtx(), 0, get_TrxName());
 			tax.setC_Order_ID(getC_Order_ID());
