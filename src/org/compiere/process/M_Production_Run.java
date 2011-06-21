@@ -19,6 +19,7 @@ package org.compiere.process;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.compiere.model.I_M_AttributeSet;
@@ -28,6 +29,7 @@ import org.compiere.model.MLocator;
 import org.compiere.model.MProduct;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTransaction;
+import org.compiere.model.M_Registration;
 import org.compiere.model.Query;
 import org.compiere.model.X_M_AttributeSet;
 import org.compiere.model.X_M_Production;
@@ -57,6 +59,9 @@ public class M_Production_Run extends SvrProcess {
 	private boolean mustBeStocked = false;
 	
 	private int m_level = 0;
+
+	private Properties local_ctx;
+	private String local_trxName;
 
 	/**
 	 * Prepare - e.g., get Parameters.
@@ -281,4 +286,59 @@ public class M_Production_Run extends SvrProcess {
 		msg += sql;
 		throw new AdempiereUserError (msg);
 	}
+	
+	
+	
+	
+	/**
+	 * Allow process a production order outside SvrProcess
+	 * @param ctx
+	 * @param M_Production_ID
+	 * @param stocked
+	 * @param trxName
+	 * @return
+	 * @throws Exception
+	 */
+	public String runStandalone(Properties ctx, int M_Production_ID, boolean stocked, String trxName)	throws Exception {
+		local_ctx = ctx;
+		p_Record_ID = M_Production_ID;
+		mustBeStocked = stocked;
+		local_trxName = trxName;
+		
+		return doIt();
+	}
+
+	/** 
+	 * Properties set in SvrProcess
+	 * This method override this to allow local ctx
+	 */
+	@Override
+	public Properties getCtx() {
+		Properties superCtx = super.getCtx(); 
+		if (superCtx != null)	{
+			return superCtx;
+		}
+		
+		return local_ctx;
+		
+	}
+
+	/**
+	 * Trx set in SvrProcess
+	 * This method override this to allow local ctx
+	 */
+	@Override
+	public String get_TrxName() {
+		String superTrxName = super.get_TrxName(); 
+		if (superTrxName != null)	{
+			return superTrxName;
+		}
+		return local_trxName;
+	}
+	
+	
+	
+	
+	
 } // M_Production_Run
+

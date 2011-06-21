@@ -1798,6 +1798,7 @@ public class GridTab implements DataStatusListener, Evaluatee, Serializable
 			//
 			try
 			{
+				log.log(Level.SEVERE, sql.toString());
 				pstmt = DB.prepareStatement(sql.toString(), null);
 				pstmt.setInt(1, Record_ID);
 				rs = pstmt.executeQuery();
