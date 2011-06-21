@@ -193,5 +193,11 @@ public class AbstractDocGenerateModelValidator implements IDocGenerateModelValid
 	@Override
 	public boolean ignoreShipmentComment() {
 		return false;
+	}
+
+
+	@Override
+	public boolean ignoreGuaranteeDate() {
+		return false;
 	}	
 }

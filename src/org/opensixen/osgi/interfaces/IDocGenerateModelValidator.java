@@ -102,6 +102,13 @@ public interface IDocGenerateModelValidator extends IService {
 	public boolean consolidateAllowed(MInOut source, MInvoice target);
 	
 	/**
+	 * Return true if custimization want 
+	 * ignore guarantee date in doc generation
+	 * @return
+	 */
+	public boolean ignoreGuaranteeDate();
+	
+	/**
 	 * Return the target doc updated with source info.
 	 * This method is called after create the target record.
 	 * 

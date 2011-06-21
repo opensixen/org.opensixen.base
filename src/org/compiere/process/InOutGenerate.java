@@ -267,8 +267,14 @@ public class InOutGenerate extends SvrProcess
 				}
 				
 				log.fine("check: " + order + " - DeliveryRule=" + order.getDeliveryRule());
-				//
+				// if OSGi ignore guarantee date, set date to 01/01/1970
 				Timestamp minGuaranteeDate = m_movementDate;
+				for (IDocGenerateModelValidator validator: docValidators)	{
+					if (validator.ignoreGuaranteeDate())	{
+						minGuaranteeDate = new Timestamp(1);
+						continue;
+					}
+				}
 				boolean completeOrder = MOrder.DELIVERYRULE_CompleteOrder.equals(order.getDeliveryRule());
 				//	OrderLine WHERE
 				String where = " AND M_Warehouse_ID=" + p_M_Warehouse_ID;
