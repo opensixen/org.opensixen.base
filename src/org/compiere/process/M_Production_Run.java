@@ -56,7 +56,7 @@ public class M_Production_Run extends SvrProcess {
 	/** The Record */
 	private int p_Record_ID = 0;
 
-	private boolean mustBeStocked = false;
+	private boolean mustBeStocked = true;
 	
 	private int m_level = 0;
 
