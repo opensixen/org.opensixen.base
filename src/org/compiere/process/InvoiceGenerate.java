@@ -427,6 +427,10 @@ public class InvoiceGenerate extends SvrProcess
 		if (m_invoice == null)
 		{
 			m_invoice = new MInvoice (order, 0, p_DateInvoiced);
+			// OSGi calls
+			for (IDocGenerateModelValidator validator:docValidators)	{
+				m_invoice = validator.afterCreate(order, m_invoice);
+			}
 			if (!m_invoice.save())
 				throw new IllegalStateException("Could not create Invoice (s)");
 		}
