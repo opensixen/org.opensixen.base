@@ -1665,6 +1665,8 @@ public class MInOut extends X_M_InOut implements DocAction
 			for (Iterator<Integer> it = inOutOrders.iterator(); it.hasNext(); ) {
 				order = new MOrder(getCtx(), it.next().intValue(), get_TrxName());
 				try {
+					// First set Delivered=false see Morder.updateIsDelivered 
+					order.setIsDelivered(false);
 					order.updateIsDelivered();
 				} catch (SQLException ee) {
 					log.warning("Could not update isDelivered flag on order " + order.getDocumentNo() + " : " + ee.getMessage());
