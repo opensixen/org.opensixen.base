@@ -250,7 +250,7 @@ public class MInvoiceLine extends X_C_InvoiceLine implements DocLine
 		else
 			// use product UOM if the shipment hasn't the same uom than the order
 			setC_UOM_ID(getProduct().getC_UOM_ID());
-		if (sLine.getQtyEntered() == getQtyInvoiced())	// Only set ASI if same qty
+		if (sLine.getMovementQty() == getQtyInvoiced())	// Only set ASI if same qty
 			setM_AttributeSetInstance_ID(sLine.getM_AttributeSetInstance_ID());
 	//	setS_ResourceAssignment_ID(sLine.getS_ResourceAssignment_ID());
 		if(getM_Product_ID() == 0)

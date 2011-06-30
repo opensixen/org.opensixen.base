@@ -481,12 +481,12 @@ public class InvoiceGenerate extends SvrProcess
 		}
 		//	
 		MInvoiceLine line = new MInvoiceLine (m_invoice);
+		line.setQtyInvoiced(sLine.getMovementQty());
 		line.setShipLine(sLine);
 		if (sLine.sameOrderLineUOM())
 			line.setQtyEntered(sLine.getQtyEntered());
 		else
-			line.setQtyEntered(sLine.getMovementQty());
-		line.setQtyInvoiced(sLine.getMovementQty());
+			line.setQtyEntered(sLine.getMovementQty());	
 		line.setLine(m_line + sLine.getLine());
 		// OSGi calls
 		for (IDocGenerateModelValidator validator:docValidators)	{
