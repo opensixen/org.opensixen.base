@@ -508,7 +508,7 @@ public class ModelInterfaceGenerator
 				}
 				else
 				{
-					throw new IllegalStateException("Not found AD_Ref_Table/AD_Column - DisplayType="+displayType+", AD_Reference_ID="+AD_Reference_ID);
+					throw new IllegalStateException("Not found AD_Ref_Table/AD_Column - DisplayType="+displayType+", AD_Reference_ID="+AD_Reference_ID + " in column "+ columnName);
 				}
 			}
 			catch (SQLException e)
