@@ -2561,7 +2561,7 @@ public class MOrder extends X_C_Order implements DocAction, DocWithAmounts
 		ps.setInt(1, get_ID());
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
-			int delta = rs.getInt(1);
+			float delta = rs.getFloat(1);
 			if (delta==0) {
 				setIsDelivered(true);
 			}
